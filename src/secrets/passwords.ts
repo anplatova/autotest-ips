@@ -3,7 +3,7 @@ const auth: {
     password: string,
     email: string,
 } = {
-    login: '',
+    login: '1234',
     password: '',
     email: 'gmail.com'
 }
