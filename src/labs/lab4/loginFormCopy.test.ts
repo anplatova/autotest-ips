@@ -1,7 +1,6 @@
 import { LoginPage } from "../../page-object/Login.page"
 import { MainPage } from "../../page-object/Main.page"
-import { PageObject } from "../../page-object/PageObject"
-import { auth } from "../../secrets/passwords"
+import { auth } from "../../../credential"
 
 describe('Login form', () => {
     let loginPage: LoginPage
