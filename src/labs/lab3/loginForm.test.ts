@@ -1,4 +1,5 @@
-import { auth } from "../../secrets/passwords"
+import { auth } from "../../../credential"
+
 
 describe('Login form', () => {
     beforeEach(async () => {
