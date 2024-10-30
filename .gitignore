@@ -2,4 +2,4 @@
 /misc
 /credential.ts
 /allure-results
-/src/secrets/passwords.ts
+/secrets/passwords.ts
