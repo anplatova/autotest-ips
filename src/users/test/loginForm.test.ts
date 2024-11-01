@@ -19,7 +19,7 @@ describe('Login form', () => {
     })
 
     it.only('Логинация с логином', async () => {
-        await loginPage.login(user)
+        await loginPage.loginWithLogin(user)
 
         await mainPage.open()
         const isDisplayedElement: boolean = await mainPage.isDisplayedUserLogin()

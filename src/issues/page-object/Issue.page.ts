@@ -1,6 +1,7 @@
 import { ChainablePromiseElement } from 'webdriverio'
 import { PageObject } from '../../users/page-object/PageObject'
 import { getRandomString } from '../../common/data/functions/randomString'
+import { IssueModel } from '../model/issue.model'
 
 class IssuePage extends PageObject {
     protected url: string = 'https://github.com/anplatova/test-for-study/issues'
@@ -51,15 +52,9 @@ class IssuePage extends PageObject {
         await this.getButtonLockCommentsApply().click()
     }
 
-    public async createNewIssue(): Promise<void> {
+    public async createNewIssue(issue: IssueModel): Promise<void> {
         await this.clickButtonNewIssue()
-        await this.fillFieldTitle(`${getRandomString(10)}`)
-        await this.clickButtonSubmitNewIssue()
-    }
-
-    public async createNewIssueWithLognTitle(): Promise<void> {
-        await this.clickButtonNewIssue()
-        await this.fillFieldTitle(`${getRandomString(1026)}`)
+        await this.fillFieldTitle(issue.title)
         await this.clickButtonSubmitNewIssue()
     }
 

@@ -5,35 +5,34 @@ import { userData } from '../../users/data/user.data'
 import { UserModel, createUserModel } from '../../users/model/user.model'
 import { issueData } from '../data/issue.data'
 import { IssueModel, createIssueModel } from '../model/issue.model'
+import { getRandomString } from '../../common/data/functions/randomString'
 
 describe('Issues test', () => {
-    let loginPage: LoginPage
-    let issuesPage: IssuePage
-    let labelsPage: LabelsPage
+    let loginPage: LoginPage = new LoginPage(browser)
+    let issuesPage: IssuePage = new IssuePage(browser)
+    let labelsPage: LabelsPage = new LabelsPage(browser)
     const user: UserModel = createUserModel(userData)
     const issue: IssueModel = createIssueModel(issueData)
+    const issueWithLongTitle: IssueModel = createIssueModel(issueData)
+    issueWithLongTitle.title = `${getRandomString(1025)}`,
 
-    before(async () => {
-        loginPage = new LoginPage(browser)
-        issuesPage = new IssuePage(browser)
-        labelsPage = new LabelsPage(browser)
-        await loginPage.open()
-        await loginPage.login(user)
-    })
+        before(async () => {
+            await loginPage.login(user)
+        })
 
     beforeEach(async () => {
         await issuesPage.open()
     })
 
     it.only('1 Создание задачи с допустимым количеством символов в названии', async () => {
-        await issuesPage.createNewIssue()
+        await issuesPage.createNewIssue(issue)
         const titleIssue: string = await issuesPage.getIssueTitleText()
 
         expect(await issuesPage.getIssueTitleText()).toEqual(titleIssue)
     })
 
     it('2 Создание задачи с не допустимым количеством символов в названии', async () => {
-        await issuesPage.createNewIssueWithLognTitle()
+        await issuesPage.createNewIssue(issueWithLongTitle)
 
         expect(await issuesPage.getAlertInvalidTitleText()).toEqual(true)
     })

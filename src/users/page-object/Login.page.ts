@@ -85,6 +85,14 @@ class LoginPage extends PageObject {
     }
 
     public async login(user: UserModel): Promise<void> {
+        await this.browser.url(this.url)
+        await this.waitForDisplaydLoginForm()
+        await this.setLogin(user.login)
+        await this.setPassword(user.password)
+        await this.submit()
+    }
+
+    public async loginWithLogin(user: UserModel): Promise<void> {
         await this.waitForDisplaydLoginForm()
         await this.setLogin(user.login)
         await this.setPassword(user.password)

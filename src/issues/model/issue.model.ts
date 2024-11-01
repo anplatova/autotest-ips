@@ -3,7 +3,6 @@ import { IssueData } from "../data/issue.data"
 
 type IssueModel = {
     title: string,
-    longTitle: string,
     description?: string,
     url: string,
     tag: string,
@@ -12,7 +11,6 @@ type IssueModel = {
 function createIssueModel(data: IssueData): IssueModel {
     return {
         title: data.title,
-        longTitle: data.longTitle,
         description: data.description,
         url: data.url,
         tag: data.tag
