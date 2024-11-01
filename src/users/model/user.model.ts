@@ -4,6 +4,8 @@ type UserModel = {
     login: string,
     email: string,
     password: string,
+    name: string,
+    company: string,
 }
 
 function createUserModel(data: UserData): UserModel {
@@ -11,6 +13,8 @@ function createUserModel(data: UserData): UserModel {
         login: data.login,
         password: data.password,
         email: data.email,
+        name: 'Test',
+        company: 'Test Company',
     }
 }
 

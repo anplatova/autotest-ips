@@ -2,6 +2,7 @@ import { LoginPage } from "../page-object/Login.page"
 import { MainPage } from "../page-object/Main.page"
 import { userData } from '../data/user.data'
 import { UserModel, createUserModel } from '../model/user.model'
+import { auth } from "../../credential"
 
 describe('Login form', () => {
     let loginPage: LoginPage
@@ -17,7 +18,7 @@ describe('Login form', () => {
         await loginPage.open()
     })
 
-    it('Логинация с логином', async () => {
+    it.only('Логинация с логином', async () => {
         await loginPage.login(user)
 
         await mainPage.open()

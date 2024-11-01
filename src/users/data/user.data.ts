@@ -1,4 +1,4 @@
-import { auth, email, login, password } from '../../../credential'
+import { auth } from '../../credential'
 
 type UserData = {
     login: string,
@@ -7,9 +7,9 @@ type UserData = {
 }
 
 const userData: UserData = {
-    login: login,
-    email: email,
-    password: password,
+    login: auth.login,
+    email: auth.email,
+    password: auth.password,
 }
 
 export {

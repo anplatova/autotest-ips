@@ -1,5 +1,6 @@
 import { ChainablePromiseElement } from 'webdriverio'
 import { PageObject } from '../../users/page-object/PageObject'
+import { getRandomString } from '../../common/data/functions/randomString'
 
 class IssuePage extends PageObject {
     protected url: string = 'https://github.com/anplatova/test-for-study/issues'
@@ -48,6 +49,18 @@ class IssuePage extends PageObject {
             timeoutMsg: 'Button Lock Comments Apply was not clickable'
         })
         await this.getButtonLockCommentsApply().click()
+    }
+
+    public async createNewIssue(): Promise<void> {
+        await this.clickButtonNewIssue()
+        await this.fillFieldTitle(`${getRandomString(10)}`)
+        await this.clickButtonSubmitNewIssue()
+    }
+
+    public async createNewIssueWithLognTitle(): Promise<void> {
+        await this.clickButtonNewIssue()
+        await this.fillFieldTitle(`${getRandomString(1026)}`)
+        await this.clickButtonSubmitNewIssue()
     }
 
     public async clickButtonNewIssue(): Promise<void> {
@@ -100,11 +113,11 @@ class IssuePage extends PageObject {
         await this.getFieldTitle().setValue(title)
     }
 
-    public async getAlertInvalidTitleText(): Promise<string> {
+    public async getAlertInvalidTitleText(): Promise<boolean> {
         await this.getAlertInvalidTitle().waitForDisplayed({
             timeoutMsg: 'Alert Invalid Title was not displayed'
         })
-        return this.getAlertInvalidTitle().getText()
+        return (await this.getAlertInvalidTitle()).isDisplayed()
     }
 
     public getAlertInvalidFileText(): Promise<string> {
@@ -168,6 +181,10 @@ class IssuePage extends PageObject {
         return this.browser.$('//*[@role="alert"]')
     }
 
+    private getButtonCloseIssue(): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$('//*[@data-default-action-text="Close issue"]')
+    }
+
     private getButtonDeleteIssue(): ChainablePromiseElement<WebdriverIO.Element> {
         return this.browser.$('//*[@class="octicon octicon-trash"]')
     }
@@ -176,8 +193,8 @@ class IssuePage extends PageObject {
         return this.browser.$('//*[@data-disable-with="Deleting issue…"]')
     }
 
-    private getButtonCloseIssue(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//*[@data-default-action-text="Close issue"]')
+    private getEditIssueButton(): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$('//*[@aria-label="Edit Issue title"]')
     }
 
     private getButtonLabels(): ChainablePromiseElement<WebdriverIO.Element> {
