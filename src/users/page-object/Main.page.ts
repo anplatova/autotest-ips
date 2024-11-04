@@ -1,5 +1,5 @@
 import { ChainablePromiseElement } from 'webdriverio'
-import { PageObject } from './PageObject'
+import { PageObject } from '../../common/page-object/PageObject'
 import isDisplayed from 'webdriverio/build/commands/element/isDisplayed'
 
 class MainPage extends PageObject {

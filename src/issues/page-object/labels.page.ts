@@ -1,8 +1,8 @@
 import { ChainablePromiseElement } from 'webdriverio'
-import { PageObject } from '../../users/page-object/PageObject'
+import { PageObject } from '../../common/page-object/PageObject'
 
 class LabelsPage extends PageObject {
-    protected url: string = 'https://github.com/anplatova/autotest-ips/labels'
+    protected url: string = 'https://github.com/anplatova/test-for-study/labels'
 
     constructor(browser: WebdriverIO.Browser) {
         super(browser)

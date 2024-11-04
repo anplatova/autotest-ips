@@ -1,6 +1,7 @@
 import { LoginPage } from '../../users/page-object/Login.page'
 import { IssuePage } from '../page-object/Issue.page'
-import { LabelsPage } from '../page-object/labels.page'
+import { IssuesPage } from '../page-object/Issues.page'
+import { LabelsPage } from '../page-object/Labels.page'
 import { userData } from '../../users/data/user.data'
 import { UserModel, createUserModel } from '../../users/model/user.model'
 import { issueData } from '../data/issue.data'
@@ -8,31 +9,38 @@ import { IssueModel, createIssueModel } from '../model/issue.model'
 import { getRandomString } from '../../common/data/functions/randomString'
 
 describe('Issues test', () => {
-    let loginPage: LoginPage = new LoginPage(browser)
-    let issuesPage: IssuePage = new IssuePage(browser)
-    let labelsPage: LabelsPage = new LabelsPage(browser)
+    let loginPage: LoginPage
+    let issuesPage: IssuesPage
+    let issuePage: IssuePage
+    let labelsPage: LabelsPage
     const user: UserModel = createUserModel(userData)
     const issue: IssueModel = createIssueModel(issueData)
-    const issueWithLongTitle: IssueModel = createIssueModel(issueData)
-    issueWithLongTitle.title = `${getRandomString(1025)}`,
+    const issueWithToLongTitle: IssueModel = createIssueModel(issueData)
+    issueWithToLongTitle.title = `${getRandomString(256)}`
+    const issueWithValidTitle: IssueModel = createIssueModel(issueData)
+    issueWithValidTitle.title = `${getRandomString(10)}`
 
-        before(async () => {
-            await loginPage.login(user)
-        })
+    before(async () => {
+        loginPage = new LoginPage(browser)
+        issuesPage = new IssuesPage(browser)
+        issuePage = new IssuePage(browser)
+        labelsPage = new LabelsPage(browser)
+        await loginPage.login(user)
+    })
 
     beforeEach(async () => {
         await issuesPage.open()
     })
 
-    it.only('1 Создание задачи с допустимым количеством символов в названии', async () => {
-        await issuesPage.createNewIssue(issue)
-        const titleIssue: string = await issuesPage.getIssueTitleText()
+    it('1 Создание задачи с допустимым количеством символов в названии', async () => {
+        await issuesPage.createNewIssue(issueWithValidTitle)
+        const displayedTitleIssue: string = await issuePage.getIssueTitleText()
 
-        expect(await issuesPage.getIssueTitleText()).toEqual(titleIssue)
+        expect(displayedTitleIssue).toEqual(issueWithValidTitle.title)
     })
 
     it('2 Создание задачи с не допустимым количеством символов в названии', async () => {
-        await issuesPage.createNewIssue(issueWithLongTitle)
+        await issuesPage.createNewIssue(issueWithToLongTitle)
 
         expect(await issuesPage.getAlertInvalidTitleText()).toEqual(true)
     })

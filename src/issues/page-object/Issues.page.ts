@@ -1,7 +1,10 @@
 import { ChainablePromiseElement } from 'webdriverio'
-import { PageObject } from '../../users/page-object/PageObject'
+import { PageObject } from '../../common/page-object/PageObject'
+import { getRandomString } from '../../common/data/functions/randomString'
+import { IssueModel } from '../model/issue.model'
+import { NewIssuePage } from './NewIssue.page'
 
-class IssuePage extends PageObject {
+class IssuesPage extends PageObject {
     protected url: string = 'https://github.com/anplatova/test-for-study/issues'
 
     constructor(browser: WebdriverIO.Browser) {
@@ -48,6 +51,13 @@ class IssuePage extends PageObject {
             timeoutMsg: 'Button Lock Comments Apply was not clickable'
         })
         await this.getButtonLockCommentsApply().click()
+    }
+
+    public async createNewIssue(issue: IssueModel): Promise<void> {
+        await this.clickButtonNewIssue()
+        const newIssuePage: NewIssuePage = new NewIssuePage(this.browser)
+        await newIssuePage.fillFieldTitle(issue.title)
+        await newIssuePage.clickButtonSubmitNewIssue()
     }
 
     public async clickButtonNewIssue(): Promise<void> {
@@ -100,11 +110,11 @@ class IssuePage extends PageObject {
         await this.getFieldTitle().setValue(title)
     }
 
-    public async getAlertInvalidTitleText(): Promise<string> {
+    public async getAlertInvalidTitleText(): Promise<boolean> {
         await this.getAlertInvalidTitle().waitForDisplayed({
             timeoutMsg: 'Alert Invalid Title was not displayed'
         })
-        return this.getAlertInvalidTitle().getText()
+        return (await this.getAlertInvalidTitle()).isDisplayed()
     }
 
     public getAlertInvalidFileText(): Promise<string> {
@@ -113,10 +123,6 @@ class IssuePage extends PageObject {
 
     public getCommentFileAttribute(): Promise<string> {
         return this.getCommentFile().getAttribute('target')
-    }
-
-    public getIssueTitleText(): Promise<string> {
-        return this.getIssueTitle().getText()
     }
 
     public getMessageClosedIssueText(): Promise<string> {
@@ -168,6 +174,11 @@ class IssuePage extends PageObject {
         return this.browser.$('//*[@role="alert"]')
     }
 
+
+    private getButtonCloseIssue(): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$('//*[@data-default-action-text="Close issue"]')
+    }
+
     private getButtonDeleteIssue(): ChainablePromiseElement<WebdriverIO.Element> {
         return this.browser.$('//*[@class="octicon octicon-trash"]')
     }
@@ -176,8 +187,8 @@ class IssuePage extends PageObject {
         return this.browser.$('//*[@data-disable-with="Deleting issue…"]')
     }
 
-    private getButtonCloseIssue(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//*[@data-default-action-text="Close issue"]')
+    private getEditIssueButton(): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$('//*[@aria-label="Edit Issue title"]')
     }
 
     private getButtonLabels(): ChainablePromiseElement<WebdriverIO.Element> {
@@ -228,10 +239,6 @@ class IssuePage extends PageObject {
         return this.browser.$('[type="file"]')
     }
 
-    private getIssueTitle(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//*[@class="js-issue-title markdown-title"]')
-    }
-
     private getMessageClosedIssue(): ChainablePromiseElement<WebdriverIO.Element> {
         return this.browser.$('//*[@title="Status: Closed"]')
     }
@@ -250,5 +257,5 @@ class IssuePage extends PageObject {
 }
 
 export {
-    IssuePage,
+    IssuesPage,
 }

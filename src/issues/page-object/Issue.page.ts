@@ -1,10 +1,9 @@
 import { ChainablePromiseElement } from 'webdriverio'
-import { PageObject } from '../../users/page-object/PageObject'
-import { getRandomString } from '../../common/data/functions/randomString'
+import { PageObject } from '../../common/page-object/PageObject'
 import { IssueModel } from '../model/issue.model'
 
 class IssuePage extends PageObject {
-    protected url: string = 'https://github.com/anplatova/test-for-study/issues'
+    protected url: string = 'https://github.com/anplatova/test-for-study/issue/'
 
     constructor(browser: WebdriverIO.Browser) {
         super(browser)
@@ -50,12 +49,6 @@ class IssuePage extends PageObject {
             timeoutMsg: 'Button Lock Comments Apply was not clickable'
         })
         await this.getButtonLockCommentsApply().click()
-    }
-
-    public async createNewIssue(issue: IssueModel): Promise<void> {
-        await this.clickButtonNewIssue()
-        await this.fillFieldTitle(issue.title)
-        await this.clickButtonSubmitNewIssue()
     }
 
     public async clickButtonNewIssue(): Promise<void> {

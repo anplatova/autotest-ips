@@ -1,5 +1,5 @@
 import { ChainablePromiseElement } from 'webdriverio'
-import { PageObject } from './PageObject'
+import { PageObject } from '../../common/page-object/PageObject'
 import { UserModel } from '../model/user.model'
 import { auth } from '../../credential'
 
