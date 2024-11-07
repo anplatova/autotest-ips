@@ -1,0 +1,12 @@
+https://docs.google.com/document/d/1rxC-0k7P563CgWGWchlZC-_YnZZfadrbj47dDFsBx9Y/edit?usp=sharing
+
+//*[@id="new_comment_form"]//*[@type="submit"] - кнопка сохранения комента
+
+//*[@id="new_comment_form"]//*[@class="blankslate"] - блок коментов (заблочено)
+//*[@class="discussion-sidebar-item"]//*[@role="button"]
+
+//*[@data-catalyst]//*[@type="submit"]
+
+
+//*[@class="BtnGroup d-flex width-full"]//*[@type="submit"] - кнопкая закрытия задачи
+//*[@id="partial-discussion-header"]//*[@title="Status: Closed"]

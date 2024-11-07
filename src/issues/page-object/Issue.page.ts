@@ -9,18 +9,23 @@ class IssuePage extends PageObject {
         super(browser)
     }
 
-    public async clickButtonDeleteIssue(): Promise<void> {
-        await this.getButtonDeleteIssue().waitForClickable({
-            timeoutMsg: 'Button Delete Issue was not clickable'
-        })
-        await this.getButtonDeleteIssue().click()
+    public async getLockConversation(): Promise<void> {
+        await this.clickButtonLockConversation()
+        await this.clickButtonLockConversationApply()
     }
 
-    public async clickButtonDeleteIssueApply(): Promise<void> {
-        await this.getButtonDeleteIssueApply().waitForClickable({
-            timeoutMsg: 'Button Delete Issue Apply was not clickable'
+    public async clickButtonLockConversation(): Promise<void> {
+        await this.getButtonLockConversation().waitForDisplayed({
+            timeoutMsg: 'Button Lock Conversation was not displayd'
         })
-        await this.getButtonDeleteIssueApply().click()
+        await this.getButtonLockConversation().click()
+    }
+
+    public async clickButtonLockConversationApply(): Promise<void> {
+        await this.getButtonLockConversationApply().waitForClickable({
+            timeoutMsg: 'Button Lock Comments Apply was not clickable'
+        })
+        await this.getButtonLockConversationApply().click()
     }
 
     public async clickButtonCloseIssue(): Promise<void> {
@@ -30,32 +35,18 @@ class IssuePage extends PageObject {
         await this.getButtonCloseIssue().click()
     }
 
-    public async clickButtonLabels(): Promise<void> {
-        await this.getButtonLabels().waitForClickable({
-            timeoutMsg: 'Button Labels was not clickable'
+    public async clickButtonEditIssueTitle(): Promise<void> {
+        await this.getEditIssueTitle().waitForClickable({
+            timeoutMsg: 'Edite Issue Title was not clickable'
         })
-        await this.getButtonLabels().click()
+        await this.getEditIssueTitle().click()
     }
 
-    public async clickButtonLockComments(): Promise<void> {
-        await this.getButtonLockComments().waitForClickable({
-            timeoutMsg: 'Button Lock Comments was not clickable'
+    public async clickButtonSubmitNewTitle(): Promise<void> {
+        await this.getButtonSubmitNewTitle().waitForClickable({
+            timeoutMsg: 'Button Submit New Issue was not clickable'
         })
-        await this.getButtonLockComments().click()
-    }
-
-    public async clickButtonLockCommentsApply(): Promise<void> {
-        await this.getButtonLockCommentsApply().waitForClickable({
-            timeoutMsg: 'Button Lock Comments Apply was not clickable'
-        })
-        await this.getButtonLockCommentsApply().click()
-    }
-
-    public async clickButtonNewIssue(): Promise<void> {
-        await this.getButtonNewIssue().waitForClickable({
-            timeoutMsg: 'Button New Issue was not clickable'
-        })
-        await this.getButtonNewIssue().click()
+        await this.getButtonSubmitNewTitle().click()
     }
 
     public async clickButtonSaveComment(): Promise<void> {
@@ -65,33 +56,11 @@ class IssuePage extends PageObject {
         await this.getButtonSaveComment().click()
     }
 
-    public async clickButtonSignOut(): Promise<void> {
-        await this.getButtonSignOut().waitForClickable({
-            timeoutMsg: 'Button Sign Out was not clickable'
-        })
-        await this.getButtonSignOut().click()
-    }
-
-    public async clickButtonSubmitNewIssue(): Promise<void> {
-        await this.getButtonSubmitNewIssue().waitForClickable({
-            timeoutMsg: 'Button Submit New Issue was not clickable'
-        })
-        await this.getButtonSubmitNewIssue().click()
-    }
-
-    public async fillFieldComment(comment: string): Promise<void> {
-        await this.getFieldComment().waitForDisplayed({
-            timeoutMsg: 'Comment field was not displayed'
-        })
-        await this.getFieldComment().setValue(comment)
-    }
-
-    public async fillFieldFilterLabels(labelName: string): Promise<void> {
-        await this.getFieldFilterLabels().waitForDisplayed({
-            timeoutMsg: 'Field Filter Labels was not displayed'
-        })
-        await this.getFieldFilterLabels().setValue(labelName)
-        await this.browser.pause(1000)
+    public async editIssueTitle(issue: IssueModel): Promise<void> {
+        await this.clickButtonEditIssueTitle()
+        await this.fillFieldTitle('')
+        await this.fillFieldTitle(issue.title)
+        await this.clickButtonSubmitNewTitle()
     }
 
     public async fillFieldTitle(title: string): Promise<void> {
@@ -101,152 +70,84 @@ class IssuePage extends PageObject {
         await this.getFieldTitle().setValue(title)
     }
 
-    public async getAlertInvalidTitleText(): Promise<boolean> {
-        await this.getAlertInvalidTitle().waitForDisplayed({
-            timeoutMsg: 'Alert Invalid Title was not displayed'
+    public async getIssueTitleText(): Promise<string> {
+        await this.getIssueTitle().waitForDisplayed({
+            timeoutMsg: 'Title was not displayed'
         })
-        return (await this.getAlertInvalidTitle()).isDisplayed()
-    }
-
-    public getAlertInvalidFileText(): Promise<string> {
-        return this.getAlertInvalidFile().getText()
-    }
-
-    public getCommentFileAttribute(): Promise<string> {
-        return this.getCommentFile().getAttribute('target')
-    }
-
-    public getIssueTitleText(): Promise<string> {
         return this.getIssueTitle().getText()
     }
 
-    public getMessageClosedIssueText(): Promise<string> {
-        return this.getMessageClosedIssue().getText()
+    public async getMessageClosedIssueText(): Promise<boolean> {
+        await this.getMessageClosedIssue().waitForDisplayed({
+            timeoutMsg: 'Message Closed Issue was not displayed'
+        })
+        return this.getMessageClosedIssue().isDisplayed()
     }
 
-    public getMessageDeletedIssueText(): Promise<string> {
-        return this.getMessageDeletedIssue().getText()
-    }
-
-    public getMessageLockCommentsText(): Promise<string> {
-        return this.getMessageLockComments().getText()
+    public async getMessageLockConversationText(): Promise<boolean> {
+        await this.getMessageLockConversation().waitForDisplayed({
+            timeoutMsg: 'Message Lock Conversation was not displayed'
+        })
+        return this.getMessageLockConversation().isDisplayed()
     }
 
     public getSavedCommentText(): Promise<string> {
         return this.getSavedComment().getText()
     }
 
-    public async openUserMenu(): Promise<void> {
-        await this.getUserAvatar().waitForClickable({
-            timeoutMsg: 'User avatar was not clickable'
+    public async fillFieldComment(comment: string): Promise<void> {
+        await this.getFieldComment().waitForDisplayed({
+            timeoutMsg: 'Comment field was not displayed'
         })
-        await this.getUserAvatar().click()
+        await this.getFieldComment().setValue(comment)
     }
 
     public async openUrl(url: string): Promise<void> {
         await this.browser.url(url)
     }
 
-    public async uploadCommentFile(filePath: string): Promise<void> {
-        await this.getInputFile().waitForExist({
-            timeoutMsg: 'File input field was not exist',
-        })
-        const file: string = await this.browser.uploadFile(filePath)
-        await this.getInputFile().setValue(file)
-        await this.browser.pause(2000)
-    }
-
-    private getUserAvatar(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//summary//*[contains(@class, "avatar")]')
-    }
-
-
-    private getAlertInvalidFile(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//*[@class="error bad-file"]')
-    }
-
-    private getAlertInvalidTitle(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//*[@role="alert"]')
-    }
-
     private getButtonCloseIssue(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//*[@data-default-action-text="Close issue"]')
+        return this.browser.$('//*[@class="BtnGroup d-flex width-full"]//*[@type="submit"]')
     }
 
-    private getButtonDeleteIssue(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//*[@class="octicon octicon-trash"]')
+    private getButtonLockConversation(): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$('//*[@class="discussion-sidebar-item"]//*[@role="button"]')
     }
 
-    private getButtonDeleteIssueApply(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//*[@data-disable-with="Deleting issue…"]')
-    }
-
-    private getEditIssueButton(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//*[@aria-label="Edit Issue title"]')
-    }
-
-    private getButtonLabels(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//*[@data-hotkey="l"]')
-    }
-
-    private getButtonLockComments(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//*[@class="octicon octicon-lock"]')
-    }
-
-    private getButtonLockCommentsApply(): ChainablePromiseElement<WebdriverIO.Element> {
+    private getButtonLockConversationApply(): ChainablePromiseElement<WebdriverIO.Element> {
         return this.browser.$('//*[@class="btn btn-block"]')
     }
 
-    private getButtonNewIssue(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//*[@data-hotkey="c"]')
+    private getButtonSubmitNewTitle(): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$('//*[@class="Button--secondary Button--medium Button"]')
     }
 
     private getButtonSaveComment(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//*[@class="btn-primary btn"]')
+        return this.browser.$('//*[@id="new_comment_form"]//*[@type="submit"]')
     }
 
-    private getButtonSignOut(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//*[@class="dropdown-item dropdown-signout"]')
-    }
-
-    private getButtonSubmitNewIssue(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//*[@class="btn-primary btn ml-2"]')
-    }
-
-    private getCommentFile(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//p[@dir="auto"]//a')
-    }
-
-    private getFieldComment(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//*[@id="new_comment_field"]')
-    }
-
-    private getFieldFilterLabels(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//*[@aria-label="Filter labels"]')
+    private getEditIssueTitle(): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$('//*[@aria-label="Edit Issue title"]')
     }
 
     private getFieldTitle(): ChainablePromiseElement<WebdriverIO.Element> {
         return this.browser.$('//*[@id="issue_title"]')
     }
 
-    private getInputFile(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('[type="file"]')
-    }
-
     private getIssueTitle(): ChainablePromiseElement<WebdriverIO.Element> {
         return this.browser.$('//*[@class="js-issue-title markdown-title"]')
+    }
+
+    private getMessageLockConversation(): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$('//*[@id="new_comment_form"]//*[@class="blankslate"]')
     }
 
     private getMessageClosedIssue(): ChainablePromiseElement<WebdriverIO.Element> {
         return this.browser.$('//*[@title="Status: Closed"]')
     }
 
-    private getMessageDeletedIssue(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//*[@class="blankslate-heading"]')
-    }
-
-    private getMessageLockComments(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//*[@class="blankslate"]/p')
+    private getFieldComment(): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$('//*[@id="new_comment_field"]')
     }
 
     private getSavedComment(): ChainablePromiseElement<WebdriverIO.Element> {

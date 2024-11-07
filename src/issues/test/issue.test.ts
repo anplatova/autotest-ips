@@ -1,30 +1,41 @@
-import { LoginPage } from '../../users/page-object/Login.page'
+import { getRandomString } from '../../common/data/functions/randomString'
 import { IssuePage } from '../page-object/Issue.page'
 import { IssuesPage } from '../page-object/Issues.page'
-import { LabelsPage } from '../page-object/Labels.page'
-import { userData } from '../../users/data/user.data'
-import { UserModel, createUserModel } from '../../users/model/user.model'
 import { issueData } from '../data/issue.data'
 import { IssueModel, createIssueModel } from '../model/issue.model'
-import { getRandomString } from '../../common/data/functions/randomString'
+import { LoginPage } from '../../common/user/page-object/Login.page'
+import { LogoutPage } from '../../common/user/page-object/Logout.page'
+import { LabelsPage } from '../page-object/Labels.page'
+import { NewIssuePage } from '../page-object/NewIssue.page'
+import { userData } from '../../common/user/data/user.data'
+import { UserModel, createUserModel } from '../../common/user/model/user.model'
 
 describe('Issues test', () => {
     let loginPage: LoginPage
     let issuesPage: IssuesPage
     let issuePage: IssuePage
+    let newIssuePage: NewIssuePage
     let labelsPage: LabelsPage
+    let logoutPage: LogoutPage
     const user: UserModel = createUserModel(userData)
     const issue: IssueModel = createIssueModel(issueData)
+
     const issueWithToLongTitle: IssueModel = createIssueModel(issueData)
-    issueWithToLongTitle.title = `${getRandomString(256)}`
+    issueWithToLongTitle.title = getRandomString(1025)
+
     const issueWithValidTitle: IssueModel = createIssueModel(issueData)
-    issueWithValidTitle.title = `${getRandomString(10)}`
+    issueWithValidTitle.title = getRandomString(10)
+
+    const issueTitleAfterEdite: IssueModel = createIssueModel(issueData)
+    issueTitleAfterEdite.title = getRandomString(40)
 
     before(async () => {
         loginPage = new LoginPage(browser)
         issuesPage = new IssuesPage(browser)
         issuePage = new IssuePage(browser)
+        newIssuePage = new NewIssuePage(browser)
         labelsPage = new LabelsPage(browser)
+        logoutPage = new LogoutPage(browser)
         await loginPage.login(user)
     })
 
@@ -33,117 +44,92 @@ describe('Issues test', () => {
     })
 
     it('1 Создание задачи с допустимым количеством символов в названии', async () => {
-        await issuesPage.createNewIssue(issueWithValidTitle)
+        await issuesPage.clickButtonNewIssue()
+        await newIssuePage.createNewIssue(issueWithValidTitle)
+
         const displayedTitleIssue: string = await issuePage.getIssueTitleText()
 
         expect(displayedTitleIssue).toEqual(issueWithValidTitle.title)
     })
 
     it('2 Создание задачи с не допустимым количеством символов в названии', async () => {
-        await issuesPage.createNewIssue(issueWithToLongTitle)
+        await issuesPage.clickButtonNewIssue()
+        await newIssuePage.createNewIssue(issueWithToLongTitle)
 
-        expect(await issuesPage.getAlertInvalidTitleText()).toEqual(true)
+        expect(await newIssuePage.getAlertInvalidTitleText()).toEqual(true)
     })
 
-    // it ('3 Редактирование названия созданной задачи', async () => {
+    it('3 Редактирование названия созданной задачи', async () => {
+        await issuesPage.clickButtonNewIssue()
+        await newIssuePage.createNewIssue(issueTitleAfterEdite)
 
-    // })
+        issueTitleAfterEdite.title = getRandomString(40)
+        await issuePage.editIssueTitle(issueTitleAfterEdite)
+
+        const displayedNewTitleIssue: string = await issuePage.getIssueTitleText()
+
+        expect(displayedNewTitleIssue).toEqual(issueTitleAfterEdite.title)
+
+    })
 
     // it('4 Добавление файла допустимого формата в задачу', async () => {
-    //     await issuesPage.createNewIssue()
-    //     await issuesPage.uploadCommentFile(issue.commentFilePath)
-    //     await issuesPage.clickButtonSubmitNewIssue()
-
-    //     expect(await issuesPage.getCommentFileAttribute()).toEqual('_blank')
     // })
 
     // it('5 Ошибка при добавлении файла недопустимого формата', async () => {
-    //     await issuesPage.clickButtonNewIssue()
-    //     await issuesPage.uploadCommentFile(invalidFile)
-
-    //     expect(await issuesPage.getAlertInvalidFileText()).toEqual('We don’t support that file type. Try again with a GIF, JPEG, JPG, MOV, MP4, PNG, SVG, WEBM, CSV, DOCX, FODG, FODP, FODS, FODT, GZ, LOG, MD, ODF, ODG, ODP, ODS, ODT, PATCH, PDF, PPTX, TGZ, TXT, XLS, XLSX or ZIP.')
     // })
 
-    // it('6 Возможность оставлять комментарии к задаче, если они включены', async () => {
-    //     await issuesPage.clickButtonNewIssue()
-    //     await issuesPage.fillFieldTitle(issue.title)
-    //     await issuesPage.clickButtonSubmitNewIssue()
-    //     issue.url = await browser.getUrl()
-    //     await issuesPage.openUserMenu()
-    //     await issuesPage.clickButtonSignOut()
-    //     await loginPage.open()
-    //     await loginPage.loginComment()
-    //     await browser.url(issue.url)
-    //     await issuesPage.fillFieldComment(issue.commentText)
-    //     await issuesPage.clickButtonSaveComment()
+    it('6 Возможность оставлять комментарии к задаче, если они включены', async () => {
+        await issuesPage.clickButtonNewIssue()
+        await newIssuePage.createNewIssue(issue)
+        issue.url = await browser.getUrl()
 
-    //     expect(await issuesPage.getSavedCommentText()).toEqual(issue.commentText)
-    //     await issuesPage.openUserMenu()
-    //     await issuesPage.clickButtonSignOut()
-    //     await loginPage.open()
-    //     await loginPage.login(user)
-    // })
+        await logoutPage.logOutUser()
 
-    // it('7 Блокировка комментирования задачи', async () => {
-    //     await issuesPage.clickButtonNewIssue()
-    //     await issuesPage.fillFieldTitle(issue.title)
-    //     await issuesPage.clickButtonSubmitNewIssue()
-    //     await issuesPage.clickButtonLockComments()
-    //     await issuesPage.clickButtonLockCommentsApply()
-    //     issue.url = await browser.getUrl()
-    //     await issuesPage.openUserMenu()
-    //     await issuesPage.clickButtonSignOut()
-    //     await loginPage.open()
-    //     await loginPage.loginComment()
-    //     await browser.url(issue.url)
+        await loginPage.loginComment(user)
+        await browser.url(issue.url)
 
-    //     expect(await issuesPage.getMessageLockCommentsText()).toEqual('This conversation has been locked and limited to collaborators.')
-    //     await issuesPage.openUserMenu()
-    //     await issuesPage.clickButtonSignOut()
-    //     await loginPage.open()
-    //     await loginPage.login(user)
-    // })
+        await issuePage.fillFieldComment(issue.commentText)
+        await issuePage.clickButtonSaveComment()
 
-    // it('8 Закрытие задачи', async () => {
-    //     await issuesPage.clickButtonNewIssue()
-    //     await issuesPage.fillFieldTitle(issue.title)
-    //     await issuesPage.clickButtonSubmitNewIssue()
-    //     await issuesPage.clickButtonCloseIssue()
+        expect(await issuePage.getSavedCommentText()).toEqual(issue.commentText)
 
-    //     expect(await issuesPage.getMessageClosedIssueText()).toEqual('Closed')
-    // })
+        await logoutPage.logOutUser()
+        await loginPage.login(user)
+    })
+
+    it('7 Блокировка комментирования задачи', async () => {
+        await issuesPage.clickButtonNewIssue()
+        await newIssuePage.createNewIssue(issue)
+
+        await issuePage.getLockConversation()
+        issue.url = await browser.getUrl()
+
+        await logoutPage.logOutUser()
+
+        await loginPage.loginComment(user)
+
+        await browser.url(issue.url)
+
+        expect(await issuePage.getMessageLockConversationText()).toEqual(true)
+
+        await logoutPage.logOutUser()
+        await loginPage.login(user)
+    })
+
+    it.only('8 Закрытие задачи', async () => {
+        await issuesPage.clickButtonNewIssue()
+        await newIssuePage.createNewIssue(issue)
+        await issuePage.clickButtonCloseIssue()
+
+        expect(await issuePage.getMessageClosedIssueText()).toEqual(true)
+    })
 
     // it('9 Поиск задачи по тегу', async () => {
-    //     await labelsPage.open()
-    //     await labelsPage.clickButtonNewLabel()
-    //     await labelsPage.fillFieldLabelName(issue.tag)
-    //     await labelsPage.clickButtonCreateLabel()
-    //     await issuesPage.open()
-    //     await issuesPage.clickButtonNewIssue()
-    //     await issuesPage.fillFieldTitle(issue.tag)
-    //     await issuesPage.clickButtonSubmitNewIssue()
-    //     await issuesPage.clickButtonLabels()
-    //     await issuesPage.fillFieldFilterLabels(issue.tag)
-    //     await browser.keys('Enter')
-    //     await issuesPage.clickButtonLabels()
-    //     await labelsPage.open()
-    //     await labelsPage.fillFieldSearchAllLabels(issue.tag)
-    //     await browser.keys('Enter')
-    //     await labelsPage.clickButtonLabelByFilter()
-
-    //     expect(await labelsPage.getButtonIssueFindByLabelText()).toEqual(issue.tag)
+    //   
     // })
 
     // it('10 Удаление задачи', async () => {
-    //     await issuesPage.clickButtonNewIssue()
-    //     await issuesPage.fillFieldTitle(issue.title)
-    //     await issuesPage.clickButtonSubmitNewIssue()
-    //     issue.url = await browser.getUrl()
-    //     await issuesPage.clickButtonDeleteIssue()
-    //     await issuesPage.clickButtonDeleteIssueApply()
-    //     await browser.url(issue.url)
-
-    //     expect(await issuesPage.getMessageDeletedIssueText()).toEqual('This issue has been deleted.')
+    //   
     // })
 
     after(async () => {
