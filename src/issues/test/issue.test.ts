@@ -6,7 +6,7 @@ import { IssueModel, createIssueModel } from '../model/issue.model'
 import { LoginPage } from '../../common/user/page-object/Login.page'
 import { LabelsPage } from '../page-object/Labels.page'
 import { NewIssuePage } from '../page-object/NewIssue.page'
-import { userData } from '../../common/user/data/user.data'
+import { commenterData, userData } from '../../common/user/data/user.data'
 import { UserModel, createUserModel } from '../../common/user/model/user.model'
 
 describe('Issues test', () => {
@@ -16,6 +16,7 @@ describe('Issues test', () => {
     let newIssuePage: NewIssuePage
     let labelsPage: LabelsPage
     const user: UserModel = createUserModel(userData)
+    const commentator: UserModel = createUserModel(commenterData)
     const issue: IssueModel = createIssueModel(issueData)
 
     const issueWithToLongTitle: IssueModel = createIssueModel(issueData)
@@ -24,8 +25,7 @@ describe('Issues test', () => {
     const issueWithValidTitle: IssueModel = createIssueModel(issueData)
     issueWithValidTitle.title = getRandomString(10)
 
-    const issueTitleAfterEdite: IssueModel = createIssueModel(issueData)
-    issueTitleAfterEdite.title = getRandomString(40)
+    const issueTitleAfterEdit: IssueModel = createIssueModel(issueData)
 
     before(async () => {
         loginPage = new LoginPage(browser)
@@ -36,11 +36,7 @@ describe('Issues test', () => {
         await loginPage.login(user)
     })
 
-    beforeEach(async () => {
-        await issuesPage.open()
-    })
-
-    it.only('1 Создание задачи с допустимым количеством символов в названии', async () => {
+    it('1 Создание задачи с допустимым количеством символов в названии', async () => {
         await newIssuePage.createNewIssue(issueWithValidTitle)
 
         const displayedTitleIssue: string = await issuePage.getIssueTitleText()
@@ -48,21 +44,21 @@ describe('Issues test', () => {
         expect(displayedTitleIssue).toEqual(issueWithValidTitle.title)
     })
 
-    it.only('2 Создание задачи с не допустимым количеством символов в названии', async () => {
+    it('2 Создание задачи с не допустимым количеством символов в названии', async () => {
         await newIssuePage.createNewIssue(issueWithToLongTitle)
 
         expect(await newIssuePage.getAlertInvalidTitleText()).toEqual(true)
     })
 
-    it.only('3 Редактирование названия созданной задачи', async () => {
-        await newIssuePage.createNewIssue(issueTitleAfterEdite)
+    it('3 Редактирование названия созданной задачи', async () => {
+        await newIssuePage.createNewIssue(issueTitleAfterEdit)
 
-        issueTitleAfterEdite.title = getRandomString(40)
-        await issuePage.editIssueTitle(issueTitleAfterEdite)
+        issueTitleAfterEdit.title = getRandomString(40)
+        await issuePage.editIssueTitle(issueTitleAfterEdit)
 
         const displayedNewTitleIssue: string = await issuePage.getIssueTitleText()
 
-        expect(displayedNewTitleIssue).toEqual(issueTitleAfterEdite.title)
+        expect(displayedNewTitleIssue).toEqual(issueTitleAfterEdit.title)
 
     })
 
@@ -72,47 +68,48 @@ describe('Issues test', () => {
     it('5 Ошибка при добавлении файла недопустимого формата', async () => {
     })
 
-    it.only('6 Возможность оставлять комментарии к задаче, если они включены', async () => {
-        await newIssuePage.createNewIssue(issue)
-        issue.url = await browser.getUrl()
+    describe('Проверка возможности комментирования', () => {
+        it.only('6 Возможность оставлять комментарии к задаче, если они включены', async () => {
+            await newIssuePage.createNewIssue(issue)
+            issue.url = await browser.getUrl()
 
-        await browser.reloadSession()
+            await browser.reloadSession()
 
-        await loginPage.loginComment(user)
-        await browser.url(issue.url)
+            await loginPage.login(commentator)
+            await browser.url(issue.url)
 
-        await issuePage.fillFieldComment(issue.commentText)
-        await issuePage.clickButtonSaveComment()
+            await issuePage.fillFieldComment(issue.commentText)
+            await issuePage.clickButtonSaveComment()
 
-        expect(await issuePage.getSavedCommentText()).toEqual(issue.commentText)
+            expect(await issuePage.getSavedCommentText()).toEqual(issue.commentText)
+        })
 
-        await browser.reloadSession()
-        await loginPage.login(user)
+        it.only('7 Блокировка комментирования задачи', async () => {
+            await newIssuePage.createNewIssue(issue)
+
+            await issuePage.lockConversation()
+            issue.url = await browser.getUrl()
+
+            await browser.reloadSession()
+
+            await loginPage.login(commentator)
+
+            await browser.url(issue.url)
+
+            expect(await issuePage.isDisplayedLockConversationText()).toEqual(true)
+        })
+
+        afterEach(async () => {
+            await browser.reloadSession()
+            await loginPage.login(user)
+        })
     })
 
-    it.only('7 Блокировка комментирования задачи', async () => {
-        await newIssuePage.createNewIssue(issue)
-
-        await issuePage.getLockConversation()
-        issue.url = await browser.getUrl()
-
-        await browser.reloadSession()
-
-        await loginPage.loginComment(user)
-
-        await browser.url(issue.url)
-
-        expect(await issuePage.getMessageLockConversationText()).toEqual(true)
-
-        await browser.reloadSession()
-        await loginPage.login(user)
-    })
-
-    it.only('8 Закрытие задачи', async () => {
+    it('8 Закрытие задачи', async () => {
         await newIssuePage.createNewIssue(issue)
         await issuePage.clickButtonCloseIssue()
 
-        expect(await issuePage.getMessageClosedIssueText()).toEqual(true)
+        expect(await issuePage.getMessageClosedIssueText()).toEqual(true) //isDispl
     })
 
     it('9 Поиск задачи по тегу', async () => {
@@ -126,16 +123,12 @@ describe('Issues test', () => {
 
     })
 
-    it.only('10 Удаление задачи', async () => {
+    it('10 Удаление задачи', async () => {
         await newIssuePage.createNewIssue(issue)
         issue.url = await browser.getUrl()
         await issuePage.deleteIssue()
         await browser.url(issue.url)
 
         expect(await issuePage.getMessageDeletedIssueText()).toEqual(true)
-    })
-
-    after(async () => {
-        await browser.reloadSession()
     })
 })

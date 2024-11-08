@@ -69,14 +69,6 @@ class LoginPage extends PageObject {
         await this.submit()
     }
 
-    public async loginComment(user: UserModel): Promise<void> {
-        await this.browser.url(this.url)
-        await this.waitForDisplaydLoginForm()
-        await this.setLogin(user.commentLogin)
-        await this.setPassword(user.commentPassword)
-        await this.submit()
-    }
-
     public isDisplayedError(): Promise<boolean> {
         return this.getErrorMessage().isDisplayed()
     }

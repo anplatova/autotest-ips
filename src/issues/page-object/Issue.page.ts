@@ -9,7 +9,7 @@ class IssuePage extends PageObject {
         super(browser)
     }
 
-    public async getLockConversation(): Promise<void> {
+    public async lockConversation(): Promise<void> {
         await this.clickButtonLockConversation()
         await this.clickButtonLockConversationApply()
     }
@@ -70,7 +70,7 @@ class IssuePage extends PageObject {
         await this.getButtonSaveLabel().click()
     }
 
-    public async clickButtonSubmitNewTitle(): Promise<void> {
+    public async submitNewTitle(): Promise<void> {
         await this.getButtonSubmitNewTitle().waitForClickable({
             timeoutMsg: 'Button Submit New Issue was not clickable'
         })
@@ -91,9 +91,8 @@ class IssuePage extends PageObject {
 
     public async editIssueTitle(issue: IssueModel): Promise<void> {
         await this.clickButtonEditIssueTitle()
-        await this.fillFieldTitle('')
         await this.fillFieldTitle(issue.title)
-        await this.clickButtonSubmitNewTitle()
+        await this.submitNewTitle()
     }
 
     public async fillFieldTitle(title: string): Promise<void> {
@@ -131,7 +130,7 @@ class IssuePage extends PageObject {
         return this.getMessageDeletedIssue().isDisplayed()
     }
 
-    public async getMessageLockConversationText(): Promise<boolean> {
+    public async isDisplayedLockConversationText(): Promise<boolean> {
         await this.getMessageLockConversation().waitForDisplayed({
             timeoutMsg: 'Message Lock Conversation was not displayed'
         })
@@ -145,7 +144,10 @@ class IssuePage extends PageObject {
         await this.getOpenPopupCreateLabel().click()
     }
 
-    public getSavedCommentText(): Promise<string> {
+    public async getSavedCommentText(): Promise<string> {
+        await this.getSavedComment().waitForDisplayed({
+            timeoutMsg: 'Comment text was not displayed'
+        })
         return this.getSavedComment().getText()
     }
 

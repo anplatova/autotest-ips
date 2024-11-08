@@ -13,10 +13,10 @@ class NewIssuePage extends PageObject {
     public async createNewIssue(issue: IssueModel): Promise<void> {
         await this.browser.url(this.url)
         await this.fillFieldTitle(issue.title)
-        await this.clickButtonSubmitNewIssue()
+        await this.submitNewIssue()
     }
 
-    public async clickButtonSubmitNewIssue(): Promise<void> {
+    public async submitNewIssue(): Promise<void> {
         await this.getButtonSubmitNewIssue().waitForClickable({
             timeoutMsg: 'Button Submit New Issue was not clickable'
         })
