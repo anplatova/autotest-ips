@@ -1,7 +1,7 @@
 import { LoginPage } from "../../page-object/Login.page"
 import { ProfilePage } from "../../page-object/Profile.page"
 import { UserPage } from "../../page-object/User.page"
-import { auth } from "../../../credential"
+import { auth } from "../../credential"
 import { getRandomString } from "../lab1/task8"
 
 

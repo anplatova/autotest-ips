@@ -1,7 +1,7 @@
 import { ChainablePromiseElement } from 'webdriverio'
 import { PageObject } from '../../common/page-object/PageObject'
 import { UserModel } from '../model/user.model'
-import { auth } from '../../../credential'
+import { auth } from '../../credential'
 
 class LoginPage extends PageObject {
     protected url: string = 'https://github.com/login'

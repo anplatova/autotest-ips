@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosRequestHeaders, Method, AxiosResponse } from 'axios'
-import { token } from "../../../credential"
+import { token } from "../../credential"
 
 type APIProviderPArameter = {
     isSuccesfulResponce: boolean,

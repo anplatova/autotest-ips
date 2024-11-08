@@ -1,4 +1,4 @@
-import { auth } from "../../../credential"
+import { auth } from "../../credential"
 
 
 describe('Login form', () => {
