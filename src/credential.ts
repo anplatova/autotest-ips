@@ -12,7 +12,7 @@ const auth: {
     commentPassword: 'Kon_12_Ya'
 }
 
-const token = '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'
+const token = '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'
 
 export {
     auth,

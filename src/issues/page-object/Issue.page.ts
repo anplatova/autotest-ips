@@ -35,11 +35,39 @@ class IssuePage extends PageObject {
         await this.getButtonCloseIssue().click()
     }
 
+    public async clickButtonDeleteIssue(): Promise<void> {
+        await this.getButtonDeleteIssue().waitForClickable({
+            timeoutMsg: 'Delete Issue button was not clickable'
+        })
+        await this.getButtonDeleteIssue().click()
+    }
+
+    public async clickButtonDeleteIssueApply(): Promise<void> {
+        await this.getButtonDeleteIssueApply().waitForClickable({
+            timeoutMsg: 'Delete Issue apply button was not clickable'
+        })
+        await this.getButtonDeleteIssueApply().click()
+    }
+
     public async clickButtonEditIssueTitle(): Promise<void> {
         await this.getEditIssueTitle().waitForClickable({
             timeoutMsg: 'Edite Issue Title was not clickable'
         })
         await this.getEditIssueTitle().click()
+    }
+
+    public async clickButtonLabels(): Promise<void> {
+        await this.getButtonLabels().waitForClickable({
+            timeoutMsg: 'Button Labels was not clickable'
+        })
+        await this.getButtonLabels().click()
+    }
+
+    public async clickButtonSaveLabels(): Promise<void> {
+        await this.getButtonSaveLabel().waitForClickable({
+            timeoutMsg: 'Button Labels was not clickable'
+        })
+        await this.getButtonSaveLabel().click()
     }
 
     public async clickButtonSubmitNewTitle(): Promise<void> {
@@ -56,6 +84,11 @@ class IssuePage extends PageObject {
         await this.getButtonSaveComment().click()
     }
 
+    public async deleteIssue(): Promise<void> {
+        await this.clickButtonDeleteIssue()
+        await this.clickButtonDeleteIssueApply()
+    }
+
     public async editIssueTitle(issue: IssueModel): Promise<void> {
         await this.clickButtonEditIssueTitle()
         await this.fillFieldTitle('')
@@ -68,6 +101,13 @@ class IssuePage extends PageObject {
             timeoutMsg: 'Title field was not displayed'
         })
         await this.getFieldTitle().setValue(title)
+    }
+
+    public async fillFieldFilterLabels(issue: IssueModel): Promise<void> {
+        await this.getFieldFilterLabels().waitForDisplayed({
+            timeoutMsg: 'Field Filter Labels was not displayed'
+        })
+        await this.getFieldFilterLabels().setValue(issue.tag)
     }
 
     public async getIssueTitleText(): Promise<string> {
@@ -84,11 +124,25 @@ class IssuePage extends PageObject {
         return this.getMessageClosedIssue().isDisplayed()
     }
 
+    public async getMessageDeletedIssueText(): Promise<boolean> {
+        await this.getMessageDeletedIssue().waitForDisplayed({
+            timeoutMsg: 'Message Closed Issue was not displayed'
+        })
+        return this.getMessageDeletedIssue().isDisplayed()
+    }
+
     public async getMessageLockConversationText(): Promise<boolean> {
         await this.getMessageLockConversation().waitForDisplayed({
             timeoutMsg: 'Message Lock Conversation was not displayed'
         })
         return this.getMessageLockConversation().isDisplayed()
+    }
+
+    public async openPopupCreateNewLabel(): Promise<void> {
+        await this.getOpenPopupCreateLabel().waitForClickable({
+            timeoutMsg: 'Button Open Popup new label was not clickable'
+        })
+        await this.getOpenPopupCreateLabel().click()
     }
 
     public getSavedCommentText(): Promise<string> {
@@ -106,8 +160,20 @@ class IssuePage extends PageObject {
         await this.browser.url(url)
     }
 
+    private getButtonDeleteIssue(): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$('//*[@id="partial-discussion-sidebar"]/div[9]/details/summary')
+    }
+
+    private getButtonDeleteIssueApply(): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$('//*[@class="edit_issue"]//*[@type="submit"]')
+    }
+
     private getButtonCloseIssue(): ChainablePromiseElement<WebdriverIO.Element> {
         return this.browser.$('//*[@class="BtnGroup d-flex width-full"]//*[@type="submit"]')
+    }
+
+    private getButtonLabels(): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$('//*[@id="labels-select-menu"]//*[@role="button"]')
     }
 
     private getButtonLockConversation(): ChainablePromiseElement<WebdriverIO.Element> {
@@ -126,6 +192,10 @@ class IssuePage extends PageObject {
         return this.browser.$('//*[@id="new_comment_form"]//*[@type="submit"]')
     }
 
+    private getButtonSaveLabel(): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$('//*[@id="labels-select-menu"]//*[@type="submit"]')
+    }
+
     private getEditIssueTitle(): ChainablePromiseElement<WebdriverIO.Element> {
         return this.browser.$('//*[@aria-label="Edit Issue title"]')
     }
@@ -134,8 +204,16 @@ class IssuePage extends PageObject {
         return this.browser.$('//*[@id="issue_title"]')
     }
 
+    private getFieldFilterLabels(): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$('//*[@aria-label="Filter labels"]')
+    }
+
     private getIssueTitle(): ChainablePromiseElement<WebdriverIO.Element> {
         return this.browser.$('//*[@class="js-issue-title markdown-title"]')
+    }
+
+    private getMessageDeletedIssue(): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$('//*[@class="blankslate-heading"]')
     }
 
     private getMessageLockConversation(): ChainablePromiseElement<WebdriverIO.Element> {
@@ -144,6 +222,10 @@ class IssuePage extends PageObject {
 
     private getMessageClosedIssue(): ChainablePromiseElement<WebdriverIO.Element> {
         return this.browser.$('//*[@title="Status: Closed"]')
+    }
+
+    private getOpenPopupCreateLabel(): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$('//*[@id="labels-select-menu"]//div[3]//summary')
     }
 
     private getFieldComment(): ChainablePromiseElement<WebdriverIO.Element> {

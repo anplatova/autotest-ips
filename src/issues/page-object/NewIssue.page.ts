@@ -11,6 +11,7 @@ class NewIssuePage extends PageObject {
     }
 
     public async createNewIssue(issue: IssueModel): Promise<void> {
+        await this.browser.url(this.url)
         await this.fillFieldTitle(issue.title)
         await this.clickButtonSubmitNewIssue()
     }
@@ -42,7 +43,7 @@ class NewIssuePage extends PageObject {
         })
         return this.getIssueTitle().getText()
     }
-    
+
     public async openUrl(url: string): Promise<void> {
         await this.browser.url(url)
     }

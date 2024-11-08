@@ -10,3 +10,8 @@ https://docs.google.com/document/d/1rxC-0k7P563CgWGWchlZC-_YnZZfadrbj47dDFsBx9Y/
 
 //*[@class="BtnGroup d-flex width-full"]//*[@type="submit"] - кнопкая закрытия задачи
 //*[@id="partial-discussion-header"]//*[@title="Status: Closed"]
+//*[@id="labels-select-menu"]//*[@role="button"] - кнопка тегов на странице задачи
+
+//*[@id="labels-select-menu"]//*[@type="submit"] - сохранить в попапе тега
+//*[@id="labels-select-menu"]//div[3]//summary - вместо enter в браузере
+//*[@id="partial-discussion-sidebar"]/div[9]/details

@@ -1,5 +1,6 @@
 import { ChainablePromiseElement } from 'webdriverio'
 import { PageObject } from '../../common/page-object/PageObject'
+import { IssueModel } from '../model/issue.model'
 
 class LabelsPage extends PageObject {
     protected url: string = 'https://github.com/anplatova/test-for-study/labels'
@@ -27,6 +28,13 @@ class LabelsPage extends PageObject {
             timeoutMsg: 'Button New Label was not clickable'
         })
         await this.getButtonNewLabel().click()
+    }
+
+    public async createNewLabel(issue: IssueModel): Promise<void> {
+        await this.browser.url(this.url)
+        await this.clickButtonNewLabel()
+        await this.fillFieldLabelName(issue.tag)
+        await this.clickButtonCreateLabel()
     }
 
     public async fillFieldLabelName(labelName: string): Promise<void> {

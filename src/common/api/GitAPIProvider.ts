@@ -1,11 +1,17 @@
 import axios, { AxiosRequestConfig, AxiosRequestHeaders, Method, AxiosResponse } from 'axios'
 import { token } from "../../credential"
 
+type APIProviderPArameter = {
+    isSuccesfulResponce: boolean,
+}
+
 class GitAPIProvider {
+    protected isSuccesfulResponce: boolean
     protected headers: AxiosRequestHeaders
     protected personalToken = token
 
-    constructor() {
+    constructor(parameter?: APIProviderPArameter) {
+        this.isSuccesfulResponce = parameter?.isSuccesfulResponce ?? true
         this.headers = {
             'Accept': 'application/vnd.github+json',
             'Authorization': `Bearer ${this.personalToken}`,
@@ -27,6 +33,10 @@ class GitAPIProvider {
     }
 
     protected sendRequest<T>(config: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+        if (!this.isSuccesfulResponce) {
+            config['validateStatus'] = status => Boolean(status)
+        }
+
         return axios(config)
     }
 }
