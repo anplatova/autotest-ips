@@ -1,6 +1,6 @@
 import { ChainablePromiseElement } from 'webdriverio'
 import { PageObject } from './PageObject'
-import { auth } from '../credential'
+import { auth } from '../../credential'
 
 class ProfilePage extends PageObject {
     protected url: string = 'https://github.com/settings/profile'

@@ -2,7 +2,7 @@ import { LoginPage } from "../page-object/Login.page"
 import { MainPage } from "../page-object/Main.page"
 import { userData } from '../data/user.data'
 import { UserModel, createUserModel } from '../model/user.model'
-import { auth } from "../../credential"
+import { auth } from "../../../credential"
 
 describe('Login form', () => {
     let loginPage: LoginPage
