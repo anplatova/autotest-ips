@@ -1,4 +1,4 @@
-import { auth } from '../../../credential'
+import { auth } from '../../../../credential'
 
 type UserData = {
     login: string,
