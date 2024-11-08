@@ -4,8 +4,7 @@ import { IssuesPage } from '../page-object/Issues.page'
 import { issueData } from '../data/issue.data'
 import { IssueModel, createIssueModel } from '../model/issue.model'
 import { LoginPage } from '../../common/user/page-object/Login.page'
-import { LogoutPage } from '../../common/user/page-object/Logout.page'
-import { LabelsPage } from '../page-object/Labels.page'
+import { LabelsPage } from '../page-object/labels.page'
 import { NewIssuePage } from '../page-object/NewIssue.page'
 import { userData } from '../../common/user/data/user.data'
 import { UserModel, createUserModel } from '../../common/user/model/user.model'
@@ -16,7 +15,6 @@ describe('Issues test', () => {
     let issuePage: IssuePage
     let newIssuePage: NewIssuePage
     let labelsPage: LabelsPage
-    let logoutPage: LogoutPage
     const user: UserModel = createUserModel(userData)
     const issue: IssueModel = createIssueModel(issueData)
 
@@ -35,7 +33,6 @@ describe('Issues test', () => {
         issuePage = new IssuePage(browser)
         newIssuePage = new NewIssuePage(browser)
         labelsPage = new LabelsPage(browser)
-        logoutPage = new LogoutPage(browser)
         await loginPage.login(user)
     })
 
@@ -78,12 +75,12 @@ describe('Issues test', () => {
     // it('5 Ошибка при добавлении файла недопустимого формата', async () => {
     // })
 
-    it('6 Возможность оставлять комментарии к задаче, если они включены', async () => {
+    it.only('6 Возможность оставлять комментарии к задаче, если они включены', async () => {
         await issuesPage.clickButtonNewIssue()
         await newIssuePage.createNewIssue(issue)
         issue.url = await browser.getUrl()
 
-        await logoutPage.logOutUser()
+        await browser.reloadSession()
 
         await loginPage.loginComment(user)
         await browser.url(issue.url)
@@ -93,7 +90,7 @@ describe('Issues test', () => {
 
         expect(await issuePage.getSavedCommentText()).toEqual(issue.commentText)
 
-        await logoutPage.logOutUser()
+        await browser.reloadSession()
         await loginPage.login(user)
     })
 
@@ -104,7 +101,7 @@ describe('Issues test', () => {
         await issuePage.getLockConversation()
         issue.url = await browser.getUrl()
 
-        await logoutPage.logOutUser()
+        await browser.reloadSession()
 
         await loginPage.loginComment(user)
 
@@ -112,7 +109,7 @@ describe('Issues test', () => {
 
         expect(await issuePage.getMessageLockConversationText()).toEqual(true)
 
-        await logoutPage.logOutUser()
+        await browser.reloadSession()
         await loginPage.login(user)
     })
 
