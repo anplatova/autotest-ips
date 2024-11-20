@@ -8,6 +8,8 @@ import { LabelsPage } from '../page-object/Labels.page'
 import { NewIssuePage } from '../page-object/NewIssue.page'
 import { commenterData, userData } from '../../common/user/data/user.data'
 import { UserModel, createUserModel } from '../../common/user/model/user.model'
+import { IMAGE_PATH, PATH_INVALID_FILE } from '../../common/data/image.data'
+import { createLabelModel, LabelModel } from '../model/label.model'
 
 describe('Issues test', () => {
     let loginPage: LoginPage
@@ -17,7 +19,9 @@ describe('Issues test', () => {
     let labelsPage: LabelsPage
     const user: UserModel = createUserModel(userData)
     const commentator: UserModel = createUserModel(commenterData)
+    const label: LabelModel = createLabelModel({ name: getRandomString(6) })
     const issue: IssueModel = createIssueModel(issueData)
+    const fileName: string = 'picture_png'
 
     const issueWithToLongTitle: IssueModel = createIssueModel(issueData)
     issueWithToLongTitle.title = getRandomString(1025)
@@ -26,6 +30,9 @@ describe('Issues test', () => {
     issueWithValidTitle.title = getRandomString(10)
 
     const issueTitleAfterEdit: IssueModel = createIssueModel(issueData)
+
+    const issueWithLabel: IssueModel = createIssueModel(issueData)
+    issueWithLabel.label = label
 
     before(async () => {
         loginPage = new LoginPage(browser)
@@ -59,17 +66,22 @@ describe('Issues test', () => {
         const displayedNewTitleIssue: string = await issuePage.getIssueTitleText()
 
         expect(displayedNewTitleIssue).toEqual(issueTitleAfterEdit.title)
-
     })
 
     it('4 Добавление файла допустимого формата в задачу', async () => {
+        await newIssuePage.createNewIssue(issue, IMAGE_PATH)
+
+        expect(await issuePage.getAttachFileName(fileName)).toEqual(true)
     })
 
     it('5 Ошибка при добавлении файла недопустимого формата', async () => {
+        await newIssuePage.createNewIssueWithInvalidFile(issue, PATH_INVALID_FILE)
+
+        expect(await issuePage.getAlertInvalidFileText()).toEqual(true)
     })
 
     describe('Проверка возможности комментирования', () => {
-        it.only('6 Возможность оставлять комментарии к задаче, если они включены', async () => {
+        it('6 Возможность оставлять комментарии к задаче, если они включены', async () => {
             await newIssuePage.createNewIssue(issue)
             issue.url = await browser.getUrl()
 
@@ -84,7 +96,7 @@ describe('Issues test', () => {
             expect(await issuePage.getSavedCommentText()).toEqual(issue.commentText)
         })
 
-        it.only('7 Блокировка комментирования задачи', async () => {
+        it('7 Блокировка комментирования задачи', async () => {
             await newIssuePage.createNewIssue(issue)
 
             await issuePage.lockConversation()
@@ -107,20 +119,23 @@ describe('Issues test', () => {
 
     it('8 Закрытие задачи', async () => {
         await newIssuePage.createNewIssue(issue)
-        await issuePage.clickButtonCloseIssue()
+        await issuePage.submitButtonCloseIssue()
 
-        expect(await issuePage.getMessageClosedIssueText()).toEqual(true) //isDispl
+        expect(await issuePage.displayedClosedIssueText()).toEqual(true)
     })
 
     it('9 Поиск задачи по тегу', async () => {
-        await labelsPage.createNewLabel(issue)
-        await newIssuePage.createNewIssue(issue)
+        await labelsPage.createNewLabel(label)
+        await newIssuePage.createNewIssue(issueWithLabel)
 
-        await issuePage.clickButtonLabels()
-        await issuePage.fillFieldFilterLabels(issue)
-        await browser.keys('Enter')
-        await issuePage.clickButtonLabels()
+        await issuePage.submitButtonLabels()
+        await issuePage.fillFieldFilterLabels(label)
+        await issuePage.submitButtonLabels()
+        await labelsPage.open()
+        await labelsPage.fillFieldSearchAllLabels(label)
+        await labelsPage.openIssueByLabel(label)
 
+        expect(await labelsPage.getButtonIssueFindByLabelText()).toEqual(issueWithLabel.title)
     })
 
     it('10 Удаление задачи', async () => {
@@ -129,6 +144,6 @@ describe('Issues test', () => {
         await issuePage.deleteIssue()
         await browser.url(issue.url)
 
-        expect(await issuePage.getMessageDeletedIssueText()).toEqual(true)
+        expect(await issuePage.displayedDeletedIssueText()).toEqual(true)
     })
 })

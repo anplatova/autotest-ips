@@ -1,6 +1,8 @@
 import { ChainablePromiseElement } from 'webdriverio'
 import { PageObject } from "../../common/page-object/PageObject"
 import { IssueModel } from "../model/issue.model"
+import { UploadFile } from '../../page-object/UploadFile'
+
 
 
 class NewIssuePage extends PageObject {
@@ -10,10 +12,23 @@ class NewIssuePage extends PageObject {
         super(browser)
     }
 
-    public async createNewIssue(issue: IssueModel): Promise<void> {
+    public async createNewIssue(issue: IssueModel, filePath?: string): Promise<void> {
         await this.browser.url(this.url)
         await this.fillFieldTitle(issue.title)
+        if (filePath) {
+            await this.uploadFile(filePath)
+            await this.browser.pause(2000)
+        }
         await this.submitNewIssue()
+    }
+
+    public async createNewIssueWithInvalidFile(issue: IssueModel, filePath?: string): Promise<void> {
+        await this.browser.url(this.url)
+        await this.fillFieldTitle(issue.title)
+        if (filePath) {
+            await this.uploadFile(filePath)
+            await this.browser.pause(2000)
+        }
     }
 
     public async submitNewIssue(): Promise<void> {
@@ -44,6 +59,15 @@ class NewIssuePage extends PageObject {
         return this.getIssueTitle().getText()
     }
 
+    public async uploadFile(filePath: string): Promise<void> {
+        await this.getInputFile().waitForExist({
+            timeoutMsg: 'File input field was not existed',
+        })
+        await this.showHiddenFileInput(this.browser)
+        const file: string = await this.browser.uploadFile(filePath)
+        await this.getInputFile().setValue(file)
+    }
+
     public async openUrl(url: string): Promise<void> {
         await this.browser.url(url)
     }
@@ -64,6 +88,16 @@ class NewIssuePage extends PageObject {
         return this.browser.$('//*[@class="js-issue-title markdown-title"]')
     }
 
+    private getInputFile(): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$('[type="file"]')
+    }
+
+    private async showHiddenFileInput(browser: WebdriverIO.Browser): Promise<void> {
+        await browser.execute(() => {
+            const htmlElement = document.querySelector('[type="file"]') as HTMLElement
+            htmlElement.style.cssText = 'display:block !important; opacity: 1; position: inherit;'
+        })
+    }
 }
 
 export {

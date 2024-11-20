@@ -1,12 +1,24 @@
 import { ChainablePromiseElement } from 'webdriverio'
 import { PageObject } from '../../common/page-object/PageObject'
 import { IssueModel } from '../model/issue.model'
+import { LabelModel } from '../model/label.model'
 
 class IssuePage extends PageObject {
     protected url: string = 'https://github.com/anplatova/test-for-study/issue/'
 
     constructor(browser: WebdriverIO.Browser) {
         super(browser)
+    }
+
+    public async getAlertInvalidFileText(): Promise<boolean> {
+        await this.getAlertInvalidFile().waitForDisplayed({
+            timeoutMsg: 'Alert Invalid File was not displayed'
+        })
+        return this.getAlertInvalidFile().isDisplayed()
+    }
+
+    public async getAttachFileName(fileName: string): Promise<boolean> {
+        return (await this.getAttachFile(fileName)).isDisplayed()
     }
 
     public async lockConversation(): Promise<void> {
@@ -28,7 +40,7 @@ class IssuePage extends PageObject {
         await this.getButtonLockConversationApply().click()
     }
 
-    public async clickButtonCloseIssue(): Promise<void> {
+    public async submitButtonCloseIssue(): Promise<void> {
         await this.getButtonCloseIssue().waitForClickable({
             timeoutMsg: 'Button Close Issue was not clickable'
         })
@@ -56,11 +68,12 @@ class IssuePage extends PageObject {
         await this.getEditIssueTitle().click()
     }
 
-    public async clickButtonLabels(): Promise<void> {
+    public async submitButtonLabels(): Promise<void> {
         await this.getButtonLabels().waitForClickable({
             timeoutMsg: 'Button Labels was not clickable'
         })
         await this.getButtonLabels().click()
+        await browser.pause(1000)
     }
 
     public async clickButtonSaveLabels(): Promise<void> {
@@ -102,11 +115,13 @@ class IssuePage extends PageObject {
         await this.getFieldTitle().setValue(title)
     }
 
-    public async fillFieldFilterLabels(issue: IssueModel): Promise<void> {
+    public async fillFieldFilterLabels(label: LabelModel): Promise<void> {
         await this.getFieldFilterLabels().waitForDisplayed({
             timeoutMsg: 'Field Filter Labels was not displayed'
         })
-        await this.getFieldFilterLabels().setValue(issue.tag)
+        await this.getFieldFilterLabels().setValue(label.name)
+        await browser.pause(1000)
+        await this.browser.keys(['Enter'])
     }
 
     public async getIssueTitleText(): Promise<string> {
@@ -116,14 +131,14 @@ class IssuePage extends PageObject {
         return this.getIssueTitle().getText()
     }
 
-    public async getMessageClosedIssueText(): Promise<boolean> {
+    public async displayedClosedIssueText(): Promise<boolean> {
         await this.getMessageClosedIssue().waitForDisplayed({
             timeoutMsg: 'Message Closed Issue was not displayed'
         })
         return this.getMessageClosedIssue().isDisplayed()
     }
 
-    public async getMessageDeletedIssueText(): Promise<boolean> {
+    public async displayedDeletedIssueText(): Promise<boolean> {
         await this.getMessageDeletedIssue().waitForDisplayed({
             timeoutMsg: 'Message Closed Issue was not displayed'
         })
@@ -160,6 +175,10 @@ class IssuePage extends PageObject {
 
     public async openUrl(url: string): Promise<void> {
         await this.browser.url(url)
+    }
+
+    private getAlertInvalidFile(): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$('//*[@class="file-attachment-errors"]')
     }
 
     private getButtonDeleteIssue(): ChainablePromiseElement<WebdriverIO.Element> {
@@ -232,6 +251,10 @@ class IssuePage extends PageObject {
 
     private getFieldComment(): ChainablePromiseElement<WebdriverIO.Element> {
         return this.browser.$('//*[@id="new_comment_field"]')
+    }
+
+    private getAttachFile(fileName: string): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$(`//*[@alt="${fileName}"]`)
     }
 
     private getSavedComment(): ChainablePromiseElement<WebdriverIO.Element> {

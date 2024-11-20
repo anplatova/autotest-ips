@@ -1,12 +1,20 @@
 import { ChainablePromiseElement } from 'webdriverio'
 import { PageObject } from '../../common/page-object/PageObject'
 import { IssueModel } from '../model/issue.model'
+import { LabelModel } from '../model/label.model'
 
 class LabelsPage extends PageObject {
     protected url: string = 'https://github.com/anplatova/test-for-study/labels'
 
     constructor(browser: WebdriverIO.Browser) {
         super(browser)
+    }
+
+    public async openIssueByLabel(label: LabelModel): Promise<void> {
+        await this.getButtonLabelByFilter(label.name).waitForClickable({
+            timeoutMsg: 'Button Label By Filter was not clickable'
+        })
+        await this.getButtonLabelByFilter(label.name).click()
     }
 
     public async clickButtonCreateLabel(): Promise<void> {
@@ -16,13 +24,6 @@ class LabelsPage extends PageObject {
         await this.getButtonCreateLabel().click()
     }
 
-    public async clickButtonLabelByFilter(): Promise<void> {
-        await this.getButtonLabelByFilter().waitForClickable({
-            timeoutMsg: 'Button Label By Filter was not clickable'
-        })
-        await this.getButtonLabelByFilter().click()
-    }
-
     public async clickButtonNewLabel(): Promise<void> {
         await this.getButtonNewLabel().waitForClickable({
             timeoutMsg: 'Button New Label was not clickable'
@@ -30,25 +31,26 @@ class LabelsPage extends PageObject {
         await this.getButtonNewLabel().click()
     }
 
-    public async createNewLabel(issue: IssueModel): Promise<void> {
+    public async createNewLabel(label: LabelModel): Promise<void> {
         await this.browser.url(this.url)
         await this.clickButtonNewLabel()
-        await this.fillFieldLabelName(issue.tag)
+        await this.fillFieldLabelName(label)
         await this.clickButtonCreateLabel()
     }
 
-    public async fillFieldLabelName(labelName: string): Promise<void> {
+    public async fillFieldLabelName(label: LabelModel): Promise<void> {
         await this.getFieldLabelName().waitForDisplayed({
             timeoutMsg: 'Field Label Name was not displayed'
         })
-        await this.getFieldLabelName().setValue(labelName)
+        await this.getFieldLabelName().setValue(label.name)
     }
 
-    public async fillFieldSearchAllLabels(labelName: string): Promise<void> {
+    public async fillFieldSearchAllLabels(label: LabelModel): Promise<void> {
         await this.getFieldSearchAllLabels().waitForDisplayed({
             timeoutMsg: 'Field Search All Labels was not displayed'
         })
-        await this.getFieldSearchAllLabels().setValue(labelName)
+        await this.getFieldSearchAllLabels().setValue(label.name)
+        await browser.keys(['Enter'])
     }
 
     public getButtonIssueFindByLabelText(): Promise<string> {
@@ -71,8 +73,8 @@ class LabelsPage extends PageObject {
         return this.browser.$('//*[@data-hovercard-type="issue"]')
     }
 
-    private getButtonLabelByFilter(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//*[@class="col-md-3 col-9"]')
+    private getButtonLabelByFilter(labelName: string): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$(`//*[@data-name="${labelName}"]`)
     }
 
     private getButtonNewLabel(): ChainablePromiseElement<WebdriverIO.Element> {

@@ -1,12 +1,12 @@
-import { getRandomString } from "../../labs/lab1/task8"
 import { IssueData } from "../data/issue.data"
+import { LabelModel } from "./label.model"
 
 type IssueModel = {
     title: string,
     description?: string,
     url: string,
-    tag: string,
     commentText: string,
+    label?: LabelModel,
 }
 
 function createIssueModel(data: IssueData): IssueModel {
@@ -14,8 +14,8 @@ function createIssueModel(data: IssueData): IssueModel {
         title: data.title,
         description: data.description,
         url: data.url,
-        tag: data.tag,
-        commentText: data.commentText
+        commentText: data.commentText,
+        label: data.label
     }
 }
 
