@@ -1,11 +1,12 @@
 import { AxiosRequestConfig, AxiosResponse } from "axios"
 import { GitAPIProvider } from "../../common/api/GitAPIProvider"
 import { CreateLabel } from "./IssueAPIDataProvider"
+import { auth } from "../../../credential"
 
 class IssueAPIProvider extends GitAPIProvider {
-    public create<T>(organisation: string, data: CreateLabel): Promise<AxiosResponse<T>> {
+    public createLabel<T>(data: CreateLabel): Promise<AxiosResponse<T>> {
         const config: AxiosRequestConfig = this.configureRequest(
-            `/orgs/${organisation}/teams`,
+            `/repos/${auth.login}/test-for-study/labels`,
             'POST',
             JSON.stringify(data),
         )
