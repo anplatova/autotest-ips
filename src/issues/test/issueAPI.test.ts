@@ -1,11 +1,17 @@
 import { CreateLabelResponse, IssueAPIService } from "../api/IssueAPIService"
-import { issueData } from "../data/issue.data"
 import { createLabelModel, LabelModel } from "../model/label.model"
 
 describe('Test API', () => {
-    it('', async () => {
-        const label: LabelModel = createLabelModel(LabelData)
+    const label: LabelModel = createLabelModel()
+
+    it('Создание ', async () => {
         const response: CreateLabelResponse = await IssueAPIService.createLabel(label)
-        console.log(response)
+        console.log(response.name)
+        console.log(label)
+    })
+
+    it('Delete label', async () => {
+        await IssueAPIService.deleteLabel(label)
+        await IssueAPIService.deleteLabel({ name: '7okGCJ' })
     })
 })

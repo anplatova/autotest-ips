@@ -7,8 +7,6 @@ function getRandomString(lengthOfString: number): string {
     return result
 }
 
-console.log(getRandomString(10))
-
 export {
     getRandomString,
 }

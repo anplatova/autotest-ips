@@ -1,3 +1,4 @@
+import { getRandomString } from "../../common/data/functions/randomString"
 import { LabelData } from "../data/label.data"
 
 type LabelModel = {
@@ -6,12 +7,17 @@ type LabelModel = {
     name: string,
 }
 
-function createLabelModel(data: LabelData): LabelModel {
-    return {
-        color: data.color,
-        description: data.description,
-        name: data.name,
+function createLabelModel(data?: LabelData): LabelModel {
+    const labelModel: LabelModel = {
+        name: data?.name ?? getRandomString(6),
     }
+    if (data?.color) {
+        labelModel.color = data.color
+    }
+    if (data?.description) {
+        labelModel.description = data.description
+    }
+    return labelModel
 }
 
 export {

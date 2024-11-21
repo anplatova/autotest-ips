@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios"
 import { IssueAPIProvider } from "./IssueAPIProvider"
 import { LabelModel } from "../model/label.model"
-import { CreateLabel, IssueAPIDataProvider } from "./IssueAPIDataProvider"
+import { CreateLabelData, IssueAPIDataProvider } from "./IssueAPIDataProvider"
 
 type CreateLabelResponse = {
     id: number,
@@ -15,10 +15,16 @@ type CreateLabelResponse = {
 
 class IssueAPIService {
     public static async createLabel(label: LabelModel): Promise<CreateLabelResponse> {
-        const data: CreateLabel = IssueAPIDataProvider.getLabelData(label)
+        const data: CreateLabelData = IssueAPIDataProvider.getLabelData(label)
         const issueAPIProvider: IssueAPIProvider = new IssueAPIProvider()
         const response: AxiosResponse<CreateLabelResponse> = await issueAPIProvider.createLabel(data)
         return response.data
+    }
+
+    public static async deleteLabel(label: LabelModel): Promise<void> {
+        const issueAPIProvider: IssueAPIProvider = new IssueAPIProvider()
+        await issueAPIProvider.deleteLabel(label.name)
+        return
     }
 }
 

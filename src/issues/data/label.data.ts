@@ -1,5 +1,5 @@
 type LabelData = {
-    name: string,
+    name?: string,
     description?: string,
     color?: string,
 }
