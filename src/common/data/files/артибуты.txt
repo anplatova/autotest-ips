@@ -15,3 +15,5 @@ https://docs.google.com/document/d/1rxC-0k7P563CgWGWchlZC-_YnZZfadrbj47dDFsBx9Y/
 //*[@id="labels-select-menu"]//*[@type="submit"] - сохранить в попапе тега
 //*[@id="labels-select-menu"]//div[3]//summary - вместо enter в браузере
 //*[@id="partial-discussion-sidebar"]/div[9]/details
+
+//*[@class="blankslate-heading"] - блок на странице отображающий отсутствие искомого лейбла(тега) 

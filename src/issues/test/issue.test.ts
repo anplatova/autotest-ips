@@ -32,7 +32,7 @@ describe('Issues test', () => {
     const issueTitleAfterEdit: IssueModel = createIssueModel(issueData)
 
     const issueWithLabel: IssueModel = createIssueModel(issueData)
-    issueWithLabel.label = label
+    issueWithLabel.labels = label
 
     before(async () => {
         loginPage = new LoginPage(browser)

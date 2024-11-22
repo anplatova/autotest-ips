@@ -3,15 +3,15 @@ import { LabelModel } from "../model/label.model"
 
 type IssueData = {
     title: string,
-    description?: string,
+    body?: string,
     url: string,
-    commentText: string,
-    label?: LabelModel,
+    commentText?: string,
+    labels?: LabelModel,
 }
 
 const issueData: IssueData = {
     title: `${getRandomString(10)}`,
-    description: `${getRandomString(10)}`,
+    body: `${getRandomString(10)}`,
     url: '',
     commentText: `${getRandomString(25)}`
 }
