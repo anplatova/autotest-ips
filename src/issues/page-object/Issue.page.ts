@@ -40,7 +40,7 @@ class IssuePage extends PageObject {
         await this.getButtonLockConversationApply().click()
     }
 
-    public async submitButtonCloseIssue(): Promise<void> {
+    public async closeIssue(): Promise<void> {
         await this.getButtonCloseIssue().waitForClickable({
             timeoutMsg: 'Button Close Issue was not clickable'
         })
@@ -90,7 +90,7 @@ class IssuePage extends PageObject {
         await this.getButtonSubmitNewTitle().click()
     }
 
-    public async clickButtonSaveComment(): Promise<void> {
+    public async saveComment(): Promise<void> {
         await this.getButtonSaveComment().waitForClickable({
             timeoutMsg: 'Button Save Comment was not clickable'
         })
@@ -166,11 +166,11 @@ class IssuePage extends PageObject {
         return this.getSavedComment().getText()
     }
 
-    public async fillFieldComment(comment: string): Promise<void> {
+    public async fillFieldComment(commentText: string): Promise<void> {
         await this.getFieldComment().waitForDisplayed({
             timeoutMsg: 'Comment field was not displayed'
         })
-        await this.getFieldComment().setValue(comment)
+        await this.getFieldComment().setValue(commentText)
     }
 
     public async openUrl(url: string): Promise<void> {

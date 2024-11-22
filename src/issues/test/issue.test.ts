@@ -22,15 +22,11 @@ describe('Issues test', () => {
     const label: LabelModel = createLabelModel({ name: getRandomString(6) })
     const issue: IssueModel = createIssueModel(issueData)
     const fileName: string = 'picture_png'
-
     const issueWithToLongTitle: IssueModel = createIssueModel(issueData)
     issueWithToLongTitle.title = getRandomString(1025)
-
     const issueWithValidTitle: IssueModel = createIssueModel(issueData)
     issueWithValidTitle.title = getRandomString(10)
-
     const issueTitleAfterEdit: IssueModel = createIssueModel(issueData)
-
     const issueWithLabel: IssueModel = createIssueModel(issueData)
     issueWithLabel.labels = label
 
@@ -91,7 +87,7 @@ describe('Issues test', () => {
             await browser.url(issue.url)
 
             await issuePage.fillFieldComment(issue.commentText)
-            await issuePage.clickButtonSaveComment()
+            await issuePage.saveComment()
 
             expect(await issuePage.getSavedCommentText()).toEqual(issue.commentText)
         })
@@ -119,7 +115,7 @@ describe('Issues test', () => {
 
     it('8 Закрытие задачи', async () => {
         await newIssuePage.createNewIssue(issue)
-        await issuePage.submitButtonCloseIssue()
+        await issuePage.closeIssue()
 
         expect(await issuePage.displayedClosedIssueText()).toEqual(true)
     })

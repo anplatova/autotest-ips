@@ -6,14 +6,14 @@ type IssueData = {
     body?: string,
     url: string,
     commentText?: string,
-    labels?: LabelModel,
+    labels?: LabelModel
 }
 
 const issueData: IssueData = {
     title: `${getRandomString(10)}`,
     body: `${getRandomString(10)}`,
     url: '',
-    commentText: `${getRandomString(25)}`
+    commentText: `${getRandomString(25)}`,
 }
 
 export {
