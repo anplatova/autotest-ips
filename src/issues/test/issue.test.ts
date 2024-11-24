@@ -28,7 +28,7 @@ describe('Issues test', () => {
     issueWithValidTitle.title = getRandomString(10)
     const issueTitleAfterEdit: IssueModel = createIssueModel(issueData)
     const issueWithLabel: IssueModel = createIssueModel(issueData)
-    issueWithLabel.labels = label
+    issueWithLabel.labels = [label]
 
     before(async () => {
         loginPage = new LoginPage(browser)
@@ -86,7 +86,7 @@ describe('Issues test', () => {
             await loginPage.login(commentator)
             await browser.url(issue.url)
 
-            await issuePage.fillFieldComment(issue.commentText)
+            await issuePage.fillFieldComment(issue.commentText!)
             await issuePage.saveComment()
 
             expect(await issuePage.getSavedCommentText()).toEqual(issue.commentText)

@@ -10,12 +10,12 @@ type CreateLabelData = {
 type CreateIssueWithLabels = {
     title: string;
     body?: string,
-    labels?: string,
+    labels?: string[],
 }
 
 class IssueAPIDataProvider {
     public static getLabelData(label: LabelModel): CreateLabelData {
-        const data: LabelModel = {
+        const data: CreateLabelData = {
             name: label.name
         }
         if (label.color) {
@@ -28,14 +28,14 @@ class IssueAPIDataProvider {
     }
 
     public static getIssueWithLabelsData(issue: IssueModel): CreateIssueWithLabels {
-        const dataIssue: IssueModel = {
+        const dataIssue: CreateIssueWithLabels = {
             title: issue.title
         }
         if (issue.body) {
             dataIssue.body = issue.body
         }
         if (issue.labels) {
-            dataIssue.labels = issue.labels
+            dataIssue.labels = issue.labels.map(item => item.name)
         }
         return dataIssue
     }

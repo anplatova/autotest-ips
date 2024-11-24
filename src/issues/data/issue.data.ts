@@ -2,11 +2,11 @@ import { getRandomString } from "../../common/data/functions/randomString"
 import { LabelModel } from "../model/label.model"
 
 type IssueData = {
-    title: string,
+    title?: string,
     body?: string,
-    url: string,
+    url?: string,
     commentText?: string,
-    labels?: LabelModel
+    labels?: LabelModel[],
 }
 
 const issueData: IssueData = {

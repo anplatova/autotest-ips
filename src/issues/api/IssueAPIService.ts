@@ -14,7 +14,7 @@ type CreateLabelResponse = {
     default: boolean,
 }
 
-type CreateIssueWithLabelsResponce = {
+type CreateIssueWithLabelsResponse = {
     id: number,
     url: string,
     labels_url: string,
@@ -36,16 +36,16 @@ class IssueAPIService {
         return
     }
 
-    public static async createIssueWithLabels(issue: IssueModel): Promise<CreateIssueWithLabelsResponce> {
+    public static async createIssueWithLabels(issue: IssueModel): Promise<CreateIssueWithLabelsResponse> {
         const dataIssue: CreateIssueWithLabels = IssueAPIDataProvider.getIssueWithLabelsData(issue)
         const issueAPIProvider: IssueAPIProvider = new IssueAPIProvider()
-        const response: AxiosResponse<CreateIssueWithLabelsResponce> = await issueAPIProvider.createIssueWithLabels(dataIssue)
-        return response.dataIssue
+        const response: AxiosResponse<CreateIssueWithLabelsResponse> = await issueAPIProvider.createIssueWithLabels(dataIssue)
+        return response.data
     }
 }
 
 export {
     CreateLabelResponse,
-    CreateIssueWithLabelsResponce,
+    CreateIssueWithLabelsResponse,
     IssueAPIService,
 }
