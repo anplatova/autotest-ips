@@ -1,51 +1,95 @@
 import { AxiosResponse } from "axios"
 import { IssueAPIProvider } from "./IssueAPIProvider"
 import { LabelModel } from "../model/label.model"
-import { CreateIssueWithLabels, CreateLabelData, IssueAPIDataProvider } from "./IssueAPIDataProvider"
+import { AddLabelsToAnIssueData, CreateIssueData, CreateLabelData, IssueAPIDataProvider } from "./IssueAPIDataProvider"
 import { IssueModel } from "../model/issue.model"
 
 type CreateLabelResponse = {
     id: number,
-    node_id: string,
-    url: string,
+    html_url: string,
     name: string,
     description: string,
     color: string,
-    default: boolean,
 }
 
-type CreateIssueWithLabelsResponse = {
+type CreateIssueResponse = {
     id: number,
-    url: string,
-    labels_url: string,
+    html_url: string,
     title: string,
     body: string,
+    number: number,
+    status: string,
+}
+
+type AddLabelsToAnIssueResponse = {
+    id: number,
+    html_url: string,
+    name: string,
+    description: string,
+    color: string,
+}
+
+type GetIssueResponse = IssueInfo[]
+
+type IssueInfo = {
+    html_url: string,
+    title: string,
 }
 
 class IssueAPIService {
-    public static async createLabel(label: LabelModel): Promise<CreateLabelResponse> {
+    public static async createLabel(owner: string, repo: string, label: LabelModel): Promise<CreateLabelResponse> {
         const data: CreateLabelData = IssueAPIDataProvider.getLabelData(label)
         const issueAPIProvider: IssueAPIProvider = new IssueAPIProvider()
-        const response: AxiosResponse<CreateLabelResponse> = await issueAPIProvider.createLabel(data)
+        const response: AxiosResponse<CreateLabelResponse> = await issueAPIProvider.createLabel(owner, repo, data)
         return response.data
     }
+    // обернуть в try catch
 
-    public static async deleteLabel(label: LabelModel): Promise<void> {
+    public static async deleteLabel(owner: string, repo: string, label: LabelModel): Promise<void> {
+
         const issueAPIProvider: IssueAPIProvider = new IssueAPIProvider()
-        await issueAPIProvider.deleteLabel(label.name)
+        await issueAPIProvider.deleteLabel(owner, repo, label.name)
         return
+    } // обернуть в try catch
+
+    public static async createIssue(owner: string, repo: string, issue: IssueModel): Promise<CreateIssueResponse> {
+        try {
+            const data: CreateIssueData = IssueAPIDataProvider.getIssueData(issue)
+            const issueAPIProvider: IssueAPIProvider = new IssueAPIProvider()
+            const response: AxiosResponse<CreateIssueResponse> = await issueAPIProvider.createIssue(owner, repo, data)
+            return response.data
+        } catch (error) {
+            throw new Error(`Create an Issue failed ${error}`)
+        }
     }
 
-    public static async createIssueWithLabels(issue: IssueModel): Promise<CreateIssueWithLabelsResponse> {
-        const dataIssue: CreateIssueWithLabels = IssueAPIDataProvider.getIssueWithLabelsData(issue)
-        const issueAPIProvider: IssueAPIProvider = new IssueAPIProvider()
-        const response: AxiosResponse<CreateIssueWithLabelsResponse> = await issueAPIProvider.createIssueWithLabels(dataIssue)
-        return response.data
+    public static async addLabelsToAnIssue(owner: string, repo: string, issueNumber: number, labels: LabelModel[]): Promise<AddLabelsToAnIssueResponse> {
+        try {
+            const data: AddLabelsToAnIssueData = IssueAPIDataProvider.addLabelsToAnIssueData(labels)
+            const issueAPIProvider: IssueAPIProvider = new IssueAPIProvider()
+            const response: AxiosResponse<AddLabelsToAnIssueResponse> = await issueAPIProvider.addLabelsToAnIssue(owner, repo, issueNumber, data)
+            return response.data
+        } catch (error) {
+            throw new Error(`Add label to issue failed ${error}`)
+        }
+    }
+
+    public static async getIssues(owner: string, repo: string): Promise<GetIssueResponse> {
+        try {
+            const issueAPIProvider: IssueAPIProvider = new IssueAPIProvider()
+            const response: AxiosResponse<GetIssueResponse> = await issueAPIProvider.getIssues(owner, repo)
+            return response.data
+        } catch (error) {
+            throw new Error(`Get Issues failed ${error}`)
+        }
     }
 }
 
 export {
+    AddLabelsToAnIssueResponse,
+    GetIssueResponse,
     CreateLabelResponse,
-    CreateIssueWithLabelsResponse,
+    CreateIssueResponse,
     IssueAPIService,
+    IssueInfo,
 }

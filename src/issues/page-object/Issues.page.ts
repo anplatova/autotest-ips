@@ -1,8 +1,5 @@
 import { ChainablePromiseElement } from 'webdriverio'
 import { PageObject } from '../../common/page-object/PageObject'
-import { getRandomString } from '../../common/data/functions/randomString'
-import { IssueModel } from '../model/issue.model'
-import { NewIssuePage } from './NewIssue.page'
 
 class IssuesPage extends PageObject {
     protected url: string = 'https://github.com/anplatova/test-for-study/issues'
@@ -26,7 +23,7 @@ class IssuesPage extends PageObject {
         return this.browser.$('//*[@data-hotkey="c"]')
     }
 
-   
+
 }
 
 export {

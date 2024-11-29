@@ -1,31 +1,63 @@
 import { AxiosRequestConfig, AxiosResponse } from "axios"
 import { GitAPIProvider } from "../../common/api/GitAPIProvider"
-import { CreateIssueWithLabels, CreateLabelData } from "./IssueAPIDataProvider"
-import { auth } from "../../../credential"
+import { AddLabelsToAnIssueData, CreateIssueData, CreateLabelData } from "./IssueAPIDataProvider"
 
 class IssueAPIProvider extends GitAPIProvider {
-    public createLabel<T>(data: CreateLabelData): Promise<AxiosResponse<T>> {
+    public createLabel<T>(owner: string, repo: string, data: CreateLabelData): Promise<AxiosResponse<T>> {
         const config: AxiosRequestConfig = this.configureRequest(
-            `/repos/${auth.login}/test-for-study/labels`,
+            `/repos/${owner}/${repo}/labels`,
             'POST',
             JSON.stringify(data),
         )
         return this.sendRequest(config)
     }
 
-    public deleteLabel<T>(labelName: string): Promise<AxiosResponse<T>> {
+    public deleteLabel<T>(owner: string, repo: string, labelName: string): Promise<AxiosResponse<T>> {
         const config: AxiosRequestConfig = this.configureRequest(
-            `/repos/${auth.login}/test-for-study/labels/${labelName}`,
+            `/repos/${owner}/${repo}/labels/${labelName}`,
             'DELETE',
         )
         return this.sendRequest(config)
     }
 
-    public createIssueWithLabels<T>(dataIssue: CreateIssueWithLabels): Promise<AxiosResponse<T>> {
+    public createIssue<T>(owner: string, repo: string, dataIssue?: CreateIssueData): Promise<AxiosResponse<T>> {
         const config: AxiosRequestConfig = this.configureRequest(
-            `/repos/${auth.login}/test-for-study/issues`,
+            `/repos/${owner}/${repo}/issues`,
             'POST',
             JSON.stringify(dataIssue),
+        )
+        return this.sendRequest(config)
+    }
+
+    public addLabelsToAnIssue<T>(owner: string, repo: string, issueNumber: number, data: AddLabelsToAnIssueData): Promise<AxiosResponse<T>> {
+        const config: AxiosRequestConfig = this.configureRequest(
+            `/repos/${owner}/${repo}/issues/${issueNumber}/labels`,
+            'POST',
+            JSON.stringify(data),
+        )
+        return this.sendRequest(config)
+    }
+
+    public removeALabelFromAnIssue<T>(owner: string, repo: string, labelName: string, issueNumber: number): Promise<AxiosResponse<T>> {
+        const config: AxiosRequestConfig = this.configureRequest(
+            `/repos/${owner}/${repo}/issues/${issueNumber}/labels/${labelName}`,
+            'DELETE',
+        )
+        return this.sendRequest(config)
+    }
+
+    public getIssues<T>(owner: string, repo: string): Promise<AxiosResponse<T>> {
+        const config: AxiosRequestConfig = this.configureRequest(
+            `/repos/${owner}/${repo}/issues`,
+            'GET',
+        )
+        return this.sendRequest(config)
+    }
+
+    public getLabels<T>(owner: string, repo: string, labelName: string): Promise<AxiosResponse<T>> {
+        const config: AxiosRequestConfig = this.configureRequest(
+            `/repos/${owner}/${repo}/labels/${labelName}`,
+            'GET',
         )
         return this.sendRequest(config)
     }

@@ -4,10 +4,11 @@ import { IssueModel } from '../model/issue.model'
 import { LabelModel } from '../model/label.model'
 
 class IssuePage extends PageObject {
-    protected url: string = 'https://github.com/anplatova/test-for-study/issue/'
-
-    constructor(browser: WebdriverIO.Browser) {
+    constructor(browser: WebdriverIO.Browser, url?: string) {
         super(browser)
+        if (url) {
+            this.url = url
+        }
     }
 
     public async getAlertInvalidFileText(): Promise<boolean> {

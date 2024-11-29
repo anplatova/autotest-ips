@@ -10,6 +10,7 @@ import { commenterData, userData } from '../../common/user/data/user.data'
 import { UserModel, createUserModel } from '../../common/user/model/user.model'
 import { IMAGE_PATH, PATH_INVALID_FILE } from '../../common/data/image.data'
 import { createLabelModel, LabelModel } from '../model/label.model'
+import { Result } from 'wdio-image-comparison-service'
 
 describe('Issues test', () => {
     let loginPage: LoginPage
@@ -64,10 +65,12 @@ describe('Issues test', () => {
         expect(displayedNewTitleIssue).toEqual(issueTitleAfterEdit.title)
     })
 
-    it('4 Добавление файла допустимого формата в задачу', async () => {
+    it.only('4 Добавление файла допустимого формата в задачу', async () => {
         await newIssuePage.createNewIssue(issue, IMAGE_PATH)
+        const result: Result = await browser.checkFullPageScreen('Image in issue')
 
         expect(await issuePage.getAttachFileName(fileName)).toEqual(true)
+        expect(result).toEqual(0)
     })
 
     it('5 Ошибка при добавлении файла недопустимого формата', async () => {
@@ -131,7 +134,7 @@ describe('Issues test', () => {
         await labelsPage.fillFieldSearchAllLabels(label)
         await labelsPage.openIssueByLabel(label)
 
-        expect(await labelsPage.getButtonIssueFindByLabelText()).toEqual(issueWithLabel.title)
+        expect(await labelsPage.findIssueByLabel()).toEqual(issueWithLabel.title)
     })
 
     it('10 Удаление задачи', async () => {

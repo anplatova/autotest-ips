@@ -1,6 +1,5 @@
 import { ChainablePromiseElement } from 'webdriverio'
 import { PageObject } from '../../common/page-object/PageObject'
-import { IssueModel } from '../model/issue.model'
 import { LabelModel } from '../model/label.model'
 
 class LabelsPage extends PageObject {
@@ -15,6 +14,7 @@ class LabelsPage extends PageObject {
             timeoutMsg: 'Button Label By Filter was not clickable'
         })
         await this.getButtonLabelByFilter(label.name).click()
+        await browser.pause(1000)
     }
 
     public async clickButtonCreateLabel(): Promise<void> {
@@ -51,15 +51,19 @@ class LabelsPage extends PageObject {
         })
         await this.getFieldSearchAllLabels().setValue(label.name)
         await browser.keys(['Enter'])
+        await browser.pause(1000)
     }
 
-    public getButtonIssueFindByLabelText(): Promise<string> {
-        return this.getButtonIssueFindByLabel().getText()
+    public async noMatchingLabels(): Promise<boolean> {
+        await this.getButtonNewLabel().waitForClickable({
+            timeoutMsg: 'Button new label was not displayed'
+        })
+        return this.getMessageNoMatchingLabels().isClickable()
     }
 
-    public getMessageNoMatchingLabelsText(): Promise<string> {
-        return this.getMessageNoMatchingLabels().getText()
-    }
+    public singleDisplayedElementText(): Promise<string> {
+        return this.getSingleDisplayedElement().getText()
+    } //ддобавить ожидание отображения текста
 
     public async openUrl(url: string): Promise<void> {
         await this.browser.url(url)
@@ -69,7 +73,7 @@ class LabelsPage extends PageObject {
         return this.browser.$('//*[contains(text(), "Create label")]')
     }
 
-    private getButtonIssueFindByLabel(): ChainablePromiseElement<WebdriverIO.Element> {
+    private getSingleDisplayedElement(): ChainablePromiseElement<WebdriverIO.Element> {
         return this.browser.$('//*[@data-hovercard-type="issue"]')
     }
 
@@ -80,6 +84,10 @@ class LabelsPage extends PageObject {
     private getButtonNewLabel(): ChainablePromiseElement<WebdriverIO.Element> {
         return this.browser.$('//*[@class="position-relative d-md-block d-none"]/button')
     }
+
+    private getButtonNewIssueOnLabelsPage(): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$('//*[@class="position-relative d-md-block d-none"]/button')
+    }//поменять xpath
 
     private getFieldLabelName(): ChainablePromiseElement<WebdriverIO.Element> {
         return this.browser.$('//*[@id="label-name-"]')

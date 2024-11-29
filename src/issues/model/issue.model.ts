@@ -8,6 +8,7 @@ type IssueModel = {
     labels?: LabelModel[],
     title: string,
     url?: string,
+    number?: number,
 }
 
 function createIssueModel(data?: IssueData): IssueModel {
