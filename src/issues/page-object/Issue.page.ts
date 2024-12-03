@@ -2,6 +2,7 @@ import { ChainablePromiseElement } from 'webdriverio'
 import { PageObject } from '../../common/page-object/PageObject'
 import { IssueModel } from '../model/issue.model'
 import { LabelModel } from '../model/label.model'
+import { Reporter } from '../../common/reporter/Reporter'
 
 class IssuePage extends PageObject {
     constructor(browser: WebdriverIO.Browser, url?: string) {
@@ -98,6 +99,13 @@ class IssuePage extends PageObject {
         await this.getButtonSaveComment().click()
     }
 
+    public async saveCommentFromAuthor(): Promise<void> {
+        await this.getButtonSaveCommentFromAuthor().waitForClickable({
+            timeoutMsg: 'Button Save Comment was not clickable'
+        })
+        await this.getButtonSaveCommentFromAuthor().click()
+    }
+
     public async deleteIssue(): Promise<void> {
         await this.clickButtonDeleteIssue()
         await this.clickButtonDeleteIssueApply()
@@ -126,6 +134,7 @@ class IssuePage extends PageObject {
     }
 
     public async getIssueTitleText(): Promise<string> {
+        Reporter.addStep('Получение заголовка Issue')
         await this.getIssueTitle().waitForDisplayed({
             timeoutMsg: 'Title was not displayed'
         })
@@ -174,6 +183,24 @@ class IssuePage extends PageObject {
         await this.getFieldComment().setValue(commentText)
     }
 
+    public async createComment(filePath?: string): Promise<void> {
+        if (filePath) {
+            await this.uploadFile(filePath)
+            await this.browser.pause(4000)
+        }
+        await this.saveCommentFromAuthor()
+        await this.browser.pause(5000)
+    }
+
+    public async uploadFile(filePath: string): Promise<void> {
+        await this.getInputFile().waitForExist({
+            timeoutMsg: 'File input field was not existed',
+        })
+        await this.showHiddenFileInput(this.browser)
+        const file: string = await this.browser.uploadFile(filePath)
+        await this.getInputFile().setValue(file)
+    }
+
     public async openUrl(url: string): Promise<void> {
         await this.browser.url(url)
     }
@@ -212,6 +239,10 @@ class IssuePage extends PageObject {
 
     private getButtonSaveComment(): ChainablePromiseElement<WebdriverIO.Element> {
         return this.browser.$('//*[@id="new_comment_form"]//*[@type="submit"]')
+    }
+
+    private getButtonSaveCommentFromAuthor(): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$('//*[@class="color-bg-subtle ml-1"]')
     }
 
     private getButtonSaveLabel(): ChainablePromiseElement<WebdriverIO.Element> {
@@ -260,6 +291,24 @@ class IssuePage extends PageObject {
 
     private getSavedComment(): ChainablePromiseElement<WebdriverIO.Element> {
         return this.browser.$('//p[@dir="auto"]')
+    }
+
+    private getInputFile(): ChainablePromiseElement<WebdriverIO.Element> {
+        return this.browser.$('//*[@id="fc-new_comment_field"]')
+    }
+
+    private async showHiddenFileInput(browser: WebdriverIO.Browser): Promise<void> {
+        await browser.execute(() => {
+            const htmlElement = document.querySelector('#fc-new_comment_field') as HTMLElement
+            htmlElement.removeAttribute('hidden')
+        })
+    }
+
+    private async hideHiddenFileInput(browser: WebdriverIO.Browser): Promise<void> {
+        await browser.execute(() => {
+            const htmlElement = document.querySelector('#fc-new_comment_field') as HTMLElement
+            htmlElement.setAttribute('hidden', '')
+        })
     }
 }
 

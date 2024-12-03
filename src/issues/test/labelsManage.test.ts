@@ -6,7 +6,7 @@ import { CreateIssueResponse, IssueAPIService } from "../api/IssueAPIService"
 import { createIssueModel, IssueModel } from "../model/issue.model"
 import { createLabelModel, LabelModel } from "../model/label.model"
 import { IssuePage } from "../page-object/Issue.page"
-import { LabelsPage } from "../page-object/Labels.page"
+import { LabelsPage } from "../page-object/labels.page"
 
 describe('Label Manage Test', () => {
     const label: LabelModel = createLabelModel()

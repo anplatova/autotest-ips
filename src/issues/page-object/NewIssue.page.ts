@@ -2,6 +2,7 @@ import { ChainablePromiseElement } from 'webdriverio'
 import { PageObject } from "../../common/page-object/PageObject"
 import { IssueModel } from "../model/issue.model"
 import { UploadFile } from '../../page-object/UploadFile'
+import { Reporter } from '../../common/reporter/Reporter'
 
 
 
@@ -13,6 +14,7 @@ class NewIssuePage extends PageObject {
     }
 
     public async createNewIssue(issue: IssueModel, filePath?: string): Promise<void> {
+       Reporter.addStep('Создание нового issue')
         await this.browser.url(this.url)
         await this.fillFieldTitle(issue.title)
         if (filePath) {
@@ -23,6 +25,7 @@ class NewIssuePage extends PageObject {
     }
 
     public async createNewIssueWithInvalidFile(issue: IssueModel, filePath?: string): Promise<void> {
+        Reporter.addStep('Создание нового issue с невалидным файлом')
         await this.browser.url(this.url)
         await this.fillFieldTitle(issue.title)
         if (filePath) {
@@ -32,6 +35,7 @@ class NewIssuePage extends PageObject {
     }
 
     public async submitNewIssue(): Promise<void> {
+        Reporter.addStep('Сохрание созданного issue')
         await this.getButtonSubmitNewIssue().waitForClickable({
             timeoutMsg: 'Button Submit New Issue was not clickable'
         })
@@ -46,6 +50,7 @@ class NewIssuePage extends PageObject {
     }
 
     public async getAlertInvalidTitleText(): Promise<boolean> {
+        Reporter.addStep('Получение сообщения об ошибке о невалидном файле')
         await this.getAlertInvalidTitle().waitForDisplayed({
             timeoutMsg: 'Alert Invalid Title was not displayed'
         })

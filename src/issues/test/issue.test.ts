@@ -4,13 +4,13 @@ import { IssuesPage } from '../page-object/Issues.page'
 import { issueData } from '../data/issue.data'
 import { IssueModel, createIssueModel } from '../model/issue.model'
 import { LoginPage } from '../../common/user/page-object/Login.page'
-import { LabelsPage } from '../page-object/Labels.page'
 import { NewIssuePage } from '../page-object/NewIssue.page'
 import { commenterData, userData } from '../../common/user/data/user.data'
 import { UserModel, createUserModel } from '../../common/user/model/user.model'
 import { IMAGE_PATH, PATH_INVALID_FILE } from '../../common/data/image.data'
 import { createLabelModel, LabelModel } from '../model/label.model'
 import { Result } from 'wdio-image-comparison-service'
+import { LabelsPage } from '../page-object/labels.page'
 
 describe('Issues test', () => {
     let loginPage: LoginPage
@@ -134,7 +134,7 @@ describe('Issues test', () => {
         await labelsPage.fillFieldSearchAllLabels(label)
         await labelsPage.openIssueByLabel(label)
 
-        expect(await labelsPage.findIssueByLabel()).toEqual(issueWithLabel.title)
+        expect(await labelsPage.singleDisplayedElementText()).toEqual(issueWithLabel.title)
     })
 
     it('10 Удаление задачи', async () => {
