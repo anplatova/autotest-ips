@@ -42,4 +42,11 @@ export const config: WebdriverIO.Config = {
         ui: 'bdd',
         timeout: 60000
     },
+    afterTest: async function (
+        test: unknown,
+        context: unknown,
+        result: {error?: unknown, duration: unknown, passed: unknown}
+    ){
+        await browser.takeScreenshot()
+    }
 }

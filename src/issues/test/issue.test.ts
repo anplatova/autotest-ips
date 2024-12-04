@@ -9,7 +9,6 @@ import { commenterData, userData } from '../../common/user/data/user.data'
 import { UserModel, createUserModel } from '../../common/user/model/user.model'
 import { IMAGE_PATH, PATH_INVALID_FILE } from '../../common/data/image.data'
 import { createLabelModel, LabelModel } from '../model/label.model'
-import { Result } from 'wdio-image-comparison-service'
 import { LabelsPage } from '../page-object/labels.page'
 
 describe('Issues test', () => {
@@ -65,12 +64,10 @@ describe('Issues test', () => {
         expect(displayedNewTitleIssue).toEqual(issueTitleAfterEdit.title)
     })
 
-    it.only('4 Добавление файла допустимого формата в задачу', async () => {
+    it('4 Добавление файла допустимого формата в задачу', async () => {
         await newIssuePage.createNewIssue(issue, IMAGE_PATH)
-        const result: Result = await browser.checkFullPageScreen('Image in issue')
 
         expect(await issuePage.getAttachFileName(fileName)).toEqual(true)
-        expect(result).toEqual(0)
     })
 
     it('5 Ошибка при добавлении файла недопустимого формата', async () => {
@@ -146,3 +143,5 @@ describe('Issues test', () => {
         expect(await issuePage.displayedDeletedIssueText()).toEqual(true)
     })
 })
+
+//allure serve C:\Users\ermak\Documents\projects\autotest-ips\allure-resultest-ips

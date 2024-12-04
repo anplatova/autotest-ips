@@ -1,6 +1,7 @@
 import { ChainablePromiseElement } from 'webdriverio'
 import { PageObject } from '../../page-object/PageObject'
 import { UserModel } from '../model/user.model'
+import { Reporter } from '../../reporter/Reporter'
 
 class LoginPage extends PageObject {
     protected url: string = 'https://github.com/login'
@@ -48,6 +49,7 @@ class LoginPage extends PageObject {
     }
 
     public async login(user: UserModel): Promise<void> {
+        Reporter.addStep('Логинация в аккаунт githab')
         await this.browser.url(this.url)
         await this.waitForDisplaydLoginForm()
         await this.setLogin(user.login)

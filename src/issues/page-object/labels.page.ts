@@ -54,9 +54,14 @@ class LabelsPage extends PageObject {
         await browser.pause(1000)
     }
 
+    public async searchIssue(label: LabelModel): Promise<void> {
+        await this.fillFieldSearchAllLabels(label)
+        await this.openIssueByLabel(label)
+    }
+
     public async noMatchingLabels(): Promise<boolean> {
-        await this.getButtonNewLabel().waitForClickable({
-            timeoutMsg: 'Button new label was not displayed'
+        await this.getButtonNewIssueOnLabelsPage().waitForClickable({
+            timeoutMsg: 'Button new issue was not displayed'
         })
         return this.getMessageNoMatchingLabels().isClickable()
     }
@@ -86,7 +91,7 @@ class LabelsPage extends PageObject {
     }
 
     private getButtonNewIssueOnLabelsPage(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//*[@class="position-relative d-md-block d-none"]/button')
+        return this.browser.$('//*[@id="repo-content-pjax-container"]/div/div[2]/div[2]/a')
     }//поменять xpath
 
     private getFieldLabelName(): ChainablePromiseElement<WebdriverIO.Element> {
@@ -98,7 +103,7 @@ class LabelsPage extends PageObject {
     }
 
     private getMessageNoMatchingLabels(): ChainablePromiseElement<WebdriverIO.Element> {
-        return this.browser.$('//*[@class="blankslate-heading"]')
+        return this.browser.$('//*[@class="container-md"]')
     }
 }
 

@@ -13,6 +13,7 @@ class IssuePage extends PageObject {
     }
 
     public async getAlertInvalidFileText(): Promise<boolean> {
+        Reporter.addStep('Получение сообщения о невалидном формате файла, прикрепляемого к issue')
         await this.getAlertInvalidFile().waitForDisplayed({
             timeoutMsg: 'Alert Invalid File was not displayed'
         })
@@ -20,15 +21,25 @@ class IssuePage extends PageObject {
     }
 
     public async getAttachFileName(fileName: string): Promise<boolean> {
+        Reporter.addStep('Получение названия прикрепляемого к задаче файла')
         return (await this.getAttachFile(fileName)).isDisplayed()
     }
 
     public async lockConversation(): Promise<void> {
+        Reporter.addStep('Закрытие возможности комментировать задачу')
         await this.clickButtonLockConversation()
         await this.clickButtonLockConversationApply()
     }
 
+    public async manageLabelInIssue(label: LabelModel): Promise<void> {
+        Reporter.addStep('Добавление или снятие labels из issue')
+        await this.submitButtonLabels()
+        await this.fillFieldFilterLabels(label)
+        await this.submitButtonLabels()
+    }
+
     public async clickButtonLockConversation(): Promise<void> {
+        Reporter.addStep('Закрытие возможности комментировать задачу')
         await this.getButtonLockConversation().waitForDisplayed({
             timeoutMsg: 'Button Lock Conversation was not displayd'
         })
@@ -36,13 +47,15 @@ class IssuePage extends PageObject {
     }
 
     public async clickButtonLockConversationApply(): Promise<void> {
+        Reporter.addStep('Подтверждение закрытия возможности комментировать задачу')
         await this.getButtonLockConversationApply().waitForClickable({
-            timeoutMsg: 'Button Lock Comments Apply was not clickable'
+            timeoutMsg: 'Button Lock Conversation Apply was not clickable'
         })
         await this.getButtonLockConversationApply().click()
     }
 
     public async closeIssue(): Promise<void> {
+        Reporter.addStep('Закрытие issue')
         await this.getButtonCloseIssue().waitForClickable({
             timeoutMsg: 'Button Close Issue was not clickable'
         })
@@ -50,6 +63,7 @@ class IssuePage extends PageObject {
     }
 
     public async clickButtonDeleteIssue(): Promise<void> {
+        Reporter.addStep('Удаление issue')
         await this.getButtonDeleteIssue().waitForClickable({
             timeoutMsg: 'Delete Issue button was not clickable'
         })
@@ -57,6 +71,7 @@ class IssuePage extends PageObject {
     }
 
     public async clickButtonDeleteIssueApply(): Promise<void> {
+        Reporter.addStep('Подтверждение удаления issue')
         await this.getButtonDeleteIssueApply().waitForClickable({
             timeoutMsg: 'Delete Issue apply button was not clickable'
         })
@@ -64,6 +79,7 @@ class IssuePage extends PageObject {
     }
 
     public async clickButtonEditIssueTitle(): Promise<void> {
+        Reporter.addStep('Редактирование заголовка issue')
         await this.getEditIssueTitle().waitForClickable({
             timeoutMsg: 'Edite Issue Title was not clickable'
         })
@@ -71,6 +87,7 @@ class IssuePage extends PageObject {
     }
 
     public async submitButtonLabels(): Promise<void> {
+        Reporter.addStep('Открытие окна выбора labels')
         await this.getButtonLabels().waitForClickable({
             timeoutMsg: 'Button Labels was not clickable'
         })
@@ -79,6 +96,7 @@ class IssuePage extends PageObject {
     }
 
     public async clickButtonSaveLabels(): Promise<void> {
+        Reporter.addStep('Сохранение нового labels')
         await this.getButtonSaveLabel().waitForClickable({
             timeoutMsg: 'Button Labels was not clickable'
         })
@@ -86,6 +104,7 @@ class IssuePage extends PageObject {
     }
 
     public async submitNewTitle(): Promise<void> {
+        Reporter.addStep('Сохранение нового заголовка issue')
         await this.getButtonSubmitNewTitle().waitForClickable({
             timeoutMsg: 'Button Submit New Issue was not clickable'
         })
@@ -93,6 +112,7 @@ class IssuePage extends PageObject {
     }
 
     public async saveComment(): Promise<void> {
+        Reporter.addStep('Сохранение комментария')
         await this.getButtonSaveComment().waitForClickable({
             timeoutMsg: 'Button Save Comment was not clickable'
         })
@@ -107,17 +127,20 @@ class IssuePage extends PageObject {
     }
 
     public async deleteIssue(): Promise<void> {
+        Reporter.addStep('Удаление issue')
         await this.clickButtonDeleteIssue()
         await this.clickButtonDeleteIssueApply()
     }
 
     public async editIssueTitle(issue: IssueModel): Promise<void> {
+        Reporter.addStep('Редактирование заголовка issue')
         await this.clickButtonEditIssueTitle()
         await this.fillFieldTitle(issue.title)
         await this.submitNewTitle()
     }
 
     public async fillFieldTitle(title: string): Promise<void> {
+        Reporter.addStep('Заполненеи поля заголовок у issue')
         await this.getFieldTitle().waitForDisplayed({
             timeoutMsg: 'Title field was not displayed'
         })
@@ -125,6 +148,7 @@ class IssuePage extends PageObject {
     }
 
     public async fillFieldFilterLabels(label: LabelModel): Promise<void> {
+        Reporter.addStep('Заполненеи поля в окне поиска labels у issue')
         await this.getFieldFilterLabels().waitForDisplayed({
             timeoutMsg: 'Field Filter Labels was not displayed'
         })
@@ -134,7 +158,7 @@ class IssuePage extends PageObject {
     }
 
     public async getIssueTitleText(): Promise<string> {
-        Reporter.addStep('Получение заголовка Issue')
+        Reporter.addStep('Получение текста из заголовка Issue')
         await this.getIssueTitle().waitForDisplayed({
             timeoutMsg: 'Title was not displayed'
         })
@@ -142,6 +166,7 @@ class IssuePage extends PageObject {
     }
 
     public async displayedClosedIssueText(): Promise<boolean> {
+        Reporter.addStep('Отображение сообщения о закрытии задачи')
         await this.getMessageClosedIssue().waitForDisplayed({
             timeoutMsg: 'Message Closed Issue was not displayed'
         })
@@ -149,6 +174,7 @@ class IssuePage extends PageObject {
     }
 
     public async displayedDeletedIssueText(): Promise<boolean> {
+        Reporter.addStep('Отображение сообщения об удалении задачи')
         await this.getMessageDeletedIssue().waitForDisplayed({
             timeoutMsg: 'Message Closed Issue was not displayed'
         })
@@ -156,6 +182,7 @@ class IssuePage extends PageObject {
     }
 
     public async isDisplayedLockConversationText(): Promise<boolean> {
+        Reporter.addStep('Отображение сообщения о закрытых комментариях')
         await this.getMessageLockConversation().waitForDisplayed({
             timeoutMsg: 'Message Lock Conversation was not displayed'
         })
@@ -163,6 +190,7 @@ class IssuePage extends PageObject {
     }
 
     public async openPopupCreateNewLabel(): Promise<void> {
+        Reporter.addStep('Открытие попапа редактирования labels')
         await this.getOpenPopupCreateLabel().waitForClickable({
             timeoutMsg: 'Button Open Popup new label was not clickable'
         })
@@ -170,6 +198,7 @@ class IssuePage extends PageObject {
     }
 
     public async getSavedCommentText(): Promise<string> {
+        Reporter.addStep('Сохранение текста комментария')
         await this.getSavedComment().waitForDisplayed({
             timeoutMsg: 'Comment text was not displayed'
         })
@@ -177,6 +206,7 @@ class IssuePage extends PageObject {
     }
 
     public async fillFieldComment(commentText: string): Promise<void> {
+        Reporter.addStep('Заполнение комментария текстом')
         await this.getFieldComment().waitForDisplayed({
             timeoutMsg: 'Comment field was not displayed'
         })
@@ -184,6 +214,7 @@ class IssuePage extends PageObject {
     }
 
     public async createComment(filePath?: string): Promise<void> {
+        Reporter.addStep('Добавление файла в комментарий')
         if (filePath) {
             await this.uploadFile(filePath)
             await this.browser.pause(4000)

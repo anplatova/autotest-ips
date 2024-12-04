@@ -4,17 +4,20 @@ import { CreateIssueResponse, GetIssueResponse, IssueAPIService, IssueInfo } fro
 import { auth, authCommentator, token } from '../../../credential'
 import { IssueAPIProvider } from '../api/IssueAPIProvider'
 import { CreateIssueData, IssueAPIDataProvider } from '../api/IssueAPIDataProvider'
+import { getRandomString } from '../../common/data/functions/randomString'
 
 describe('', () => {
-    const issue: IssueModel = createIssueModel()
+    const issue: IssueModel = createIssueModel({title: getRandomString(5), body: getRandomString(10) })
 
-    it('1 код ответа 201, задача должна быть создана', async () => {
+    it.only('1 код ответа 201, задача должна быть создана', async () => {
         const data: CreateIssueData = IssueAPIDataProvider.getIssueData(issue)
         const issueAPIProvider: IssueAPIProvider = new IssueAPIProvider()
         const response: AxiosResponse<CreateIssueResponse> = await issueAPIProvider.createIssue(auth.login, auth.repo, data)
         issue.url = response.data.html_url
         //проверить все поля response, добавить expect(response.data.)
         expect(response.status).toEqual(201)
+        expect(response.data.title).toEqual(issue.title)
+        expect(response.data.body).toEqual(issue.body)
 
         const issueList: GetIssueResponse = await IssueAPIService.getIssues(auth.login, auth.repo)
         const createdIssue: IssueInfo | undefined = issueList.find(item => item.html_url === issue.url)

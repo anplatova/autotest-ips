@@ -50,7 +50,7 @@ class NewIssuePage extends PageObject {
     }
 
     public async getAlertInvalidTitleText(): Promise<boolean> {
-        Reporter.addStep('Получение сообщения об ошибке о невалидном файле')
+        Reporter.addStep('Получение сообщения об ошибке о невалидном файле, прикрепляемом к задаче')
         await this.getAlertInvalidTitle().waitForDisplayed({
             timeoutMsg: 'Alert Invalid Title was not displayed'
         })

@@ -9,9 +9,12 @@ import { IssuePage } from "../page-object/Issue.page"
 import { LabelsPage } from "../page-object/labels.page"
 
 describe('Label Manage Test', () => {
+    const labelForUI: LabelModel = createLabelModel()
     const label: LabelModel = createLabelModel()
     const issue: IssueModel = createIssueModel()
+    const issueWithLabel: IssueModel = createIssueModel()
     let issuePage: IssuePage
+    let issueWithLabelPage: IssuePage
     let labelsPage: LabelsPage
 
     before(async () => {
@@ -20,43 +23,42 @@ describe('Label Manage Test', () => {
         const user: UserModel = createUserModel(userData)
         await loginPage.login(user)
 
-        const responseData: CreateIssueResponse = await IssueAPIService.createIssue(auth.login, auth.repo, issue)
+        let responseData: CreateIssueResponse
+        responseData = await IssueAPIService.createIssue(auth.login, auth.repo, issue)
         issue.url = responseData.html_url
-        issue.number = responseData.number
-
-        //создать отдельно 2 задачу с label
+        
+        responseData = await IssueAPIService.createIssue(auth.login, auth.repo, issueWithLabel)
+        issueWithLabel.url = responseData.html_url
+        issueWithLabel.number = responseData.number
 
         issuePage = new IssuePage(browser, issue.url)
+        issueWithLabelPage = new IssuePage(browser, issueWithLabel.url)
+        await IssueAPIService.createLabel(auth.login, auth.repo, labelForUI)
         await IssueAPIService.createLabel(auth.login, auth.repo, label)
+        
+        await IssueAPIService.addLabelsToAnIssue(auth.login, auth.repo, issueWithLabel.number!, [label])
     })
 
     it('добавление label к issue', async () => {
         await issuePage.open()
-        await issuePage.submitButtonLabels()
-        await issuePage.fillFieldFilterLabels(label)
-        await issuePage.submitButtonLabels()
+        await issuePage.manageLabelInIssue(labelForUI)
         await labelsPage.open()
-        await labelsPage.fillFieldSearchAllLabels(label) //
-        await labelsPage.openIssueByLabel(label) //в один метод FindIssueByLabel
+        await labelsPage.searchIssue(labelForUI)
 
         expect(await labelsPage.singleDisplayedElementText()).toEqual(issue.title)
     })
 
     it('удаление label у issue', async () => {
-        await IssueAPIService.addLabelsToAnIssue(auth.login, auth.repo, issue.number!, [label])
-
-        await issuePage.open()
-        await issuePage.submitButtonLabels()
-        await issuePage.fillFieldFilterLabels(label)
-        await issuePage.submitButtonLabels()
+        await issueWithLabelPage.open()
+        await issuePage.manageLabelInIssue(label)
         await labelsPage.open()
-        await labelsPage.fillFieldSearchAllLabels(label)
-        await labelsPage.openIssueByLabel(label)
+        await labelsPage.searchIssue(label)
 
         expect(await labelsPage.noMatchingLabels()).toEqual(true)
     })
 
     after(async () => {
         await IssueAPIService.deleteLabel(auth.login, auth.repo, label)
+        await IssueAPIService.deleteLabel(auth.login, auth.repo, labelForUI)
     })
 })
